@@ -1,0 +1,145 @@
+<ion-content [fullscreen]="true" class="login-page">
+  <main class="login-shell">
+    <section class="login-visual">
+      <div class="login-visual__top">
+        <a class="brand" href="/" aria-label="Barmanasin Mail">
+          <span class="brand__mark">B</span>
+
+          <span class="brand__identity">
+            <strong>BARMANASIN</strong>
+            <small>MAIL</small>
+          </span>
+        </a>
+
+        <span class="secure-label">
+          SECURE CORPORATE MAIL
+        </span>
+      </div>
+
+      <div class="login-visual__content">
+        <p class="eyebrow">
+          PRIVATE COMMUNICATION INFRASTRUCTURE
+        </p>
+
+        <h1>
+          Communication,
+          <span>engineered with purpose.</span>
+        </h1>
+
+        <p class="visual-description">
+          Secure access to the Barmanasin communication network.
+          Built for focused work, trusted correspondence and
+          professional collaboration.
+        </p>
+      </div>
+
+      <div class="login-visual__footer">
+        <span>MAIL.BARMANASIN.COM</span>
+        <span>© 2026 BARMANASIN</span>
+      </div>
+
+      <div class="login-visual__grid" aria-hidden="true"></div>
+      <div class="login-visual__glow" aria-hidden="true"></div>
+    </section>
+
+    <section class="login-panel">
+      <div class="login-panel__inner">
+        <div class="login-panel__header">
+          <span class="login-panel__index">01 / ACCESS</span>
+
+          <h2>Welcome back.</h2>
+
+          <p>
+            Sign in with your Barmanasin email account.
+          </p>
+        </div>
+
+        <form class="login-form" novalidate>
+          <div class="field-group">
+            <label for="email">Email address</label>
+
+            <div class="field">
+              <ion-icon
+                name="mail-outline"
+                aria-hidden="true"
+              ></ion-icon>
+
+              <ion-input
+                id="email"
+                type="email"
+                inputmode="email"
+                autocomplete="username"
+                placeholder="name@barmanasin.com"
+                [(ngModel)]="email"
+                name="email"
+              ></ion-input>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="password">Password</label>
+
+            <div class="field">
+              <ion-icon
+                name="lock-closed-outline"
+                aria-hidden="true"
+              ></ion-icon>
+
+              <ion-input
+                id="password"
+                [type]="showPassword ? 'text' : 'password'"
+                autocomplete="current-password"
+                placeholder="Enter your password"
+                [(ngModel)]="password"
+                name="password"
+              ></ion-input>
+
+              <button
+                class="password-toggle"
+                type="button"
+                (click)="togglePasswordVisibility()"
+                [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+              >
+                <ion-icon
+                  [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+                ></ion-icon>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-meta">
+            <span>Authorized users only</span>
+
+            <a href="#">
+              Forgot password?
+            </a>
+          </div>
+
+          <ion-button
+            type="submit"
+            expand="block"
+            class="login-submit"
+          >
+            <span>Sign in to Mail</span>
+
+            <ion-icon
+              slot="end"
+              name="arrow-forward-outline"
+            ></ion-icon>
+          </ion-button>
+        </form>
+
+        <div class="login-panel__footer">
+          <div class="status">
+            <span class="status__dot"></span>
+            <span>Mail systems operational</span>
+          </div>
+
+          <span class="security-note">
+            Protected by Barmanasin infrastructure
+          </span>
+        </div>
+      </div>
+    </section>
+  </main>
+</ion-content>
