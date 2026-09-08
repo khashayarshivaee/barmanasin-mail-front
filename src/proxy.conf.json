@@ -1,0 +1,20 @@
+{
+  "/api/**": {
+    "target": "https://mail.barmanasin.com",
+    "secure": true,
+    "changeOrigin": true,
+    "headers": {
+      "Origin": "https://mail.barmanasin.com",
+      "Referer": "https://mail.barmanasin.com/"
+    }
+  },
+  "/sanctum/**": {
+    "target": "https://mail.barmanasin.com",
+    "secure": true,
+    "changeOrigin": true,
+    "headers": {
+      "Origin": "https://mail.barmanasin.com",
+      "Referer": "https://mail.barmanasin.com/"
+    }
+  }
+}

@@ -1,6 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, switchMap } from 'rxjs';
+import {
+  Observable,
+  switchMap,
+  timeout,
+} from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 
@@ -33,43 +37,65 @@ export class MailAuthService {
 
   private readonly baseUrl = environment.apiBaseUrl;
 
-  login(email: string, password: string): Observable<MailLoginResponse> {
+  private readonly requestTimeout = 12000;
+
+  login(
+    email: string,
+    password: string,
+  ): Observable<MailLoginResponse> {
     return this.http
-      .get<void>(`${this.baseUrl}/sanctum/csrf-cookie`, {
-        withCredentials: true,
-      })
+      .get<void>(
+        `${this.baseUrl}/sanctum/csrf-cookie`,
+        {
+          withCredentials: true,
+        },
+      )
       .pipe(
+        timeout(this.requestTimeout),
+
         switchMap(() =>
-          this.http.post<MailLoginResponse>(
-            `${this.baseUrl}/api/mail/auth/login`,
-            {
-              email,
-              password,
-            },
-            {
-              withCredentials: true,
-            },
-          ),
+          this.http
+            .post<MailLoginResponse>(
+              `${this.baseUrl}/api/mail/auth/login`,
+              {
+                email,
+                password,
+              },
+              {
+                withCredentials: true,
+              },
+            )
+            .pipe(
+              timeout(this.requestTimeout),
+            ),
         ),
       );
   }
 
   me(): Observable<MailMeResponse> {
-    return this.http.get<MailMeResponse>(
-      `${this.baseUrl}/api/mail/auth/me`,
-      {
-        withCredentials: true,
-      },
-    );
+    return this.http
+      .get<MailMeResponse>(
+        `${this.baseUrl}/api/mail/auth/me`,
+        {
+          withCredentials: true,
+        },
+      )
+      .pipe(
+        timeout(this.requestTimeout),
+      );
   }
 
   logout(): Observable<MailLogoutResponse> {
-    return this.http.post<MailLogoutResponse>(
-      `${this.baseUrl}/api/mail/auth/logout`,
-      {},
-      {
-        withCredentials: true,
-      },
-    );
+    return this.http
+      .post<MailLogoutResponse>(
+        `${this.baseUrl}/api/mail/auth/logout`,
+        {},
+        {
+          withCredentials: true,
+        },
+      )
+      .pipe(
+        timeout(this.requestTimeout),
+      );
   }
 }

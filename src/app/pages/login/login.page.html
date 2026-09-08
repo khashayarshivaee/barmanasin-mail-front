@@ -1,9 +1,22 @@
 <ion-content [fullscreen]="true" class="login-page">
   <main class="login-shell">
+
+    <!-- =====================================================
+         VISUAL / BRAND SIDE
+    ====================================================== -->
+
     <section class="login-visual">
+
       <div class="login-visual__top">
-        <a class="brand" href="/" aria-label="Barmanasin Mail">
-          <span class="brand__mark">B</span>
+
+        <a
+          class="brand"
+          href="/"
+          aria-label="Barmanasin Mail"
+        >
+          <span class="brand__mark">
+            B
+          </span>
 
           <span class="brand__identity">
             <strong>BARMANASIN</strong>
@@ -14,9 +27,12 @@
         <span class="secure-label">
           SECURE CORPORATE MAIL
         </span>
+
       </div>
 
+
       <div class="login-visual__content">
+
         <p class="eyebrow">
           PRIVATE COMMUNICATION INFRASTRUCTURE
         </p>
@@ -31,34 +47,81 @@
           Built for focused work, trusted correspondence and
           professional collaboration.
         </p>
+
       </div>
+
 
       <div class="login-visual__footer">
-        <span>MAIL.BARMANASIN.COM</span>
-        <span>© 2026 BARMANASIN</span>
+
+        <span>
+          MAIL.BARMANASIN.COM
+        </span>
+
+        <span>
+          © 2026 BARMANASIN
+        </span>
+
       </div>
 
-      <div class="login-visual__grid" aria-hidden="true"></div>
-      <div class="login-visual__glow" aria-hidden="true"></div>
+
+      <div
+        class="login-visual__grid"
+        aria-hidden="true"
+      ></div>
+
+      <div
+        class="login-visual__glow"
+        aria-hidden="true"
+      ></div>
+
     </section>
 
-    <section class="login-panel">
-      <div class="login-panel__inner">
-        <div class="login-panel__header">
-          <span class="login-panel__index">01 / ACCESS</span>
 
-          <h2>Welcome back.</h2>
+    <!-- =====================================================
+         LOGIN PANEL
+    ====================================================== -->
+
+    <section class="login-panel">
+
+      <div class="login-panel__inner">
+
+        <div class="login-panel__header">
+
+          <span class="login-panel__index">
+            01 / ACCESS
+          </span>
+
+          <h2>
+            Welcome back.
+          </h2>
 
           <p>
             Sign in with your Barmanasin email account.
           </p>
+
         </div>
 
-        <form class="login-form" novalidate>
+
+        <!-- =================================================
+             LOGIN FORM
+        ================================================== -->
+
+        <form
+          class="login-form"
+          novalidate
+          (ngSubmit)="submit()"
+        >
+
+          <!-- EMAIL -->
+
           <div class="field-group">
-            <label for="email">Email address</label>
+
+            <label for="email">
+              Email address
+            </label>
 
             <div class="field">
+
               <ion-icon
                 name="mail-outline"
                 aria-hidden="true"
@@ -72,14 +135,24 @@
                 placeholder="name@barmanasin.com"
                 [(ngModel)]="email"
                 name="email"
+                [disabled]="isSubmitting()"
               ></ion-input>
+
             </div>
+
           </div>
 
+
+          <!-- PASSWORD -->
+
           <div class="field-group">
-            <label for="password">Password</label>
+
+            <label for="password">
+              Password
+            </label>
 
             <div class="field">
+
               <ion-icon
                 name="lock-closed-outline"
                 aria-hidden="true"
@@ -87,59 +160,120 @@
 
               <ion-input
                 id="password"
-                [type]="showPassword ? 'text' : 'password'"
+                [type]="showPassword() ? 'text' : 'password'"
                 autocomplete="current-password"
                 placeholder="Enter your password"
                 [(ngModel)]="password"
                 name="password"
+                [disabled]="isSubmitting()"
               ></ion-input>
+
 
               <button
                 class="password-toggle"
                 type="button"
                 (click)="togglePasswordVisibility()"
-                [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+                [disabled]="isSubmitting()"
+                [attr.aria-label]="
+                  showPassword()
+                    ? 'Hide password'
+                    : 'Show password'
+                "
               >
                 <ion-icon
-                  [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+                  [name]="
+                    showPassword()
+                      ? 'eye-off-outline'
+                      : 'eye-outline'
+                  "
                 ></ion-icon>
               </button>
+
             </div>
+
           </div>
 
+
+          <!-- FORM META -->
+
           <div class="form-meta">
-            <span>Authorized users only</span>
+
+            <span>
+              Authorized users only
+            </span>
 
             <a href="#">
               Forgot password?
             </a>
+
           </div>
+
+
+          <!-- ERROR MESSAGE -->
+
+          @if (errorMessage()) {
+            <p
+              class="login-error"
+              role="alert"
+            >
+              {{ errorMessage() }}
+            </p>
+          }
+
+
+          <!-- SUBMIT -->
 
           <ion-button
             type="submit"
             expand="block"
             class="login-submit"
+            [disabled]="isSubmitting()"
           >
-            <span>Sign in to Mail</span>
+
+            <span>
+              {{
+                isSubmitting()
+                  ? 'Signing in…'
+                  : 'Sign in to Mail'
+              }}
+            </span>
 
             <ion-icon
               slot="end"
               name="arrow-forward-outline"
             ></ion-icon>
+
           </ion-button>
+
         </form>
 
+
+        <!-- =================================================
+             PANEL FOOTER
+        ================================================== -->
+
         <div class="login-panel__footer">
+
           <div class="status">
+
             <span class="status__dot"></span>
-            <span>Mail systems operational</span>
+
+            <span>
+              Mail systems operational
+            </span>
+
           </div>
+
 
           <span class="security-note">
             Protected by Barmanasin infrastructure
           </span>
+
         </div>
+
       </div>
+
     </section>
+
   </main>
 </ion-content>
