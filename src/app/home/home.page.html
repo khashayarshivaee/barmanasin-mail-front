@@ -1,20 +1,38 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content
+  [fullscreen]="true"
+  class="mail-page"
+>
+  <app-mail-shell>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <app-mail-sidebar
+      mail-sidebar
+      (compose)="openCompose()"
+      (folderChange)="onFolderChange()"
+    ></app-mail-sidebar>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+
+    <app-mail-topbar
+      mail-topbar
+    ></app-mail-topbar>
+
+
+    @if (isComposeOpen()) {
+
+      <app-mail-compose
+        mail-content
+        [isSending]="isSending()"
+        [sendStatus]="sendStatus()"
+        (discard)="closeCompose()"
+        (sendRequested)="sendMail($event)"
+      ></app-mail-compose>
+
+    } @else {
+
+      <app-mail-inbox
+        mail-content
+      ></app-mail-inbox>
+
+    }
+
+  </app-mail-shell>
 </ion-content>

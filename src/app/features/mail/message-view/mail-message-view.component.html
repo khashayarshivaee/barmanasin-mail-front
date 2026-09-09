@@ -1,0 +1,147 @@
+<section class="message-view">
+
+  <header class="message-view__toolbar">
+
+    <button
+      type="button"
+      class="message-view__back"
+      aria-label="Back to mailbox"
+      (click)="onBack()"
+    >
+      <span aria-hidden="true">
+        ←
+      </span>
+
+      <span>
+        Back
+      </span>
+    </button>
+
+
+    <div class="message-view__toolbar-actions">
+
+      @if (canArchive()) {
+        <button
+          type="button"
+          class="message-view__action"
+          aria-label="Archive message"
+          title="Archive"
+          (click)="onArchive()"
+        >
+          <ion-icon
+            name="archive-outline"
+            aria-hidden="true"
+          ></ion-icon>
+
+          <span>
+            Archive
+          </span>
+        </button>
+
+        @if (canTrash()) {
+          <button
+            type="button"
+            class="message-view__action"
+            aria-label="Move message to Trash"
+            title="Move to Trash"
+            (click)="onTrash()"
+          >
+            <ion-icon
+              name="trash-outline"
+              aria-hidden="true"
+            ></ion-icon>
+
+            <span>
+      Trash
+    </span>
+          </button>
+        }
+      }
+
+
+      <div class="message-view__toolbar-meta">
+        <span>
+          MESSAGE
+        </span>
+
+        <strong>
+          #{{ message().uid }}
+        </strong>
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <article class="message-view__content">
+
+    <header class="message-view__header">
+
+      <p class="message-view__eyebrow">
+        Correspondence
+      </p>
+
+
+      <h1 class="message-view__subject">
+        {{ message().subject }}
+      </h1>
+
+
+      <div class="message-view__sender">
+
+        <div class="message-view__avatar">
+          {{ senderInitials() }}
+        </div>
+
+
+        <div class="message-view__sender-copy">
+
+          <div class="message-view__sender-line">
+
+            <strong>
+              {{
+                message().from.name ||
+                message().from.address
+              }}
+            </strong>
+
+            <span class="message-view__date">
+              {{ message().date }}
+            </span>
+
+          </div>
+
+
+          <p class="message-view__address">
+            &lt;{{ message().from.address }}&gt;
+          </p>
+
+
+          <p class="message-view__recipient">
+            to {{ message().to }}
+
+            @if (message().cc) {
+              <span>
+                · cc {{ message().cc }}
+              </span>
+            }
+          </p>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <div class="message-view__divider"></div>
+
+
+    <div class="message-view__body">
+      {{ readableBody() }}
+    </div>
+
+  </article>
+
+</section>

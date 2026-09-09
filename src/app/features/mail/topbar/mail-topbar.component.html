@@ -1,0 +1,96 @@
+<div class="mail-topbar">
+
+  <div class="mail-topbar__context">
+
+    <span class="context-index">
+      01
+    </span>
+
+    <div class="context-copy">
+
+      <strong>
+        Inbox
+      </strong>
+
+      <span>
+        Barmanasin Mail
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <div class="mail-topbar__search">
+
+    <ion-icon
+      name="search-outline"
+      aria-hidden="true"
+    ></ion-icon>
+
+    <input
+      type="search"
+      autocomplete="off"
+      placeholder="Search mail"
+      [value]="searchQuery()"
+      (input)="updateSearch($any($event.target).value)"
+      aria-label="Search mail"
+    />
+
+    <span class="search-shortcut">
+      /
+    </span>
+
+  </div>
+
+
+  <div class="mail-topbar__account">
+
+    <button
+      type="button"
+      class="account-button"
+      (click)="openAccount()"
+      aria-label="Open account menu"
+    >
+
+      <span class="account-avatar">
+        {{ initials() }}
+      </span>
+
+
+      <span class="account-copy">
+
+        @if (userName()) {
+          <strong>
+            {{ userName() }}
+          </strong>
+        } @else {
+          <strong>
+            Barmanasin
+          </strong>
+        }
+
+        @if (mailboxAddress()) {
+          <small>
+            {{ mailboxAddress() }}
+          </small>
+        } @else {
+          <small>
+            Mail account
+          </small>
+        }
+
+      </span>
+
+
+      <ion-icon
+        class="account-chevron"
+        name="chevron-down-outline"
+        aria-hidden="true"
+      ></ion-icon>
+
+    </button>
+
+  </div>
+
+</div>

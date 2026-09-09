@@ -1,0 +1,186 @@
+<section class="message-list">
+
+  <header class="message-list__header">
+
+    <div class="message-list__heading">
+
+     <span class="message-list__eyebrow">
+  {{ eyebrow() }}
+</span>
+
+      <div class="message-list__title-row">
+
+        <h1>
+          {{ title() }}
+        </h1>
+
+        @if (messages().length > 0) {
+          <span class="message-count">
+            {{ messages().length }}
+          </span>
+        }
+
+      </div>
+
+    </div>
+
+
+    <button
+      type="button"
+      class="refresh-button"
+      (click)="refreshMailbox()"
+      aria-label="Refresh mailbox"
+    >
+      <ion-icon
+        name="refresh-outline"
+        aria-hidden="true"
+      ></ion-icon>
+    </button>
+
+  </header>
+
+
+  <div class="message-list__toolbar">
+
+    <span>
+  {{ toolbarLabel() }}
+</span>
+
+    @if (messages().length > 0) {
+      <span>
+        {{ messages().length }}
+        {{ messages().length === 1 ? 'message' : 'messages' }}
+      </span>
+    }
+
+  </div>
+
+
+  <div class="message-list__body">
+
+    @if (messages().length === 0) {
+
+      <div class="empty-state">
+
+        <div class="empty-state__icon">
+          <ion-icon
+            name="checkmark-circle-outline"
+            aria-hidden="true"
+          ></ion-icon>
+        </div>
+
+        <span class="empty-state__index">
+          00 / INBOX
+        </span>
+
+        <h2>
+          Your inbox is clear.
+        </h2>
+
+        <p>
+          New messages will appear here when mail arrives
+          at your Barmanasin account.
+        </p>
+
+      </div>
+
+    } @else {
+
+      <div class="messages">
+
+        @for (
+          message of messages();
+          track message.id
+          ) {
+
+          <article
+            class="message"
+            [class.message--unread]="message.unread"
+            [class.message--selected]="
+              selectedMessageId() === message.id
+            "
+            (click)="selectMessage(message)"
+          >
+
+            <div class="message__status">
+
+              @if (message.unread) {
+                <span
+                  class="unread-dot"
+                  aria-label="Unread"
+                ></span>
+              }
+
+            </div>
+
+
+            <div class="message__content">
+
+              <div class="message__top">
+
+                <strong class="message__sender">
+                  {{ message.senderName }}
+                </strong>
+
+                <div class="message__meta">
+
+                  @if (message.unread) {
+                    <span class="message__unread-label">
+      UNREAD
+    </span>
+                  }
+
+                  <time class="message__time">
+                    {{ message.receivedAt }}
+                  </time>
+
+                </div>
+
+              </div>
+
+
+              <div class="message__subject">
+                {{ message.subject }}
+              </div>
+
+
+              <p class="message__preview">
+                {{ message.preview }}
+              </p>
+
+            </div>
+
+
+            <button
+              type="button"
+              class="message__star"
+              [class.message__star--active]="message.starred"
+              (click)="toggleStar($event, message)"
+              [attr.aria-label]="
+                message.starred
+                  ? 'Remove star'
+                  : 'Add star'
+              "
+            >
+
+              <ion-icon
+                [name]="
+                  message.starred
+                    ? 'star'
+                    : 'star-outline'
+                "
+              ></ion-icon>
+
+            </button>
+
+          </article>
+
+        }
+
+      </div>
+
+    }
+
+  </div>
+
+</section>

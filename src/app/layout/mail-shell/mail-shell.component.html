@@ -1,0 +1,19 @@
+<div class="mail-shell">
+
+  <aside class="mail-shell__sidebar">
+    <ng-content select="[mail-sidebar]"></ng-content>
+  </aside>
+
+  <section class="mail-shell__workspace">
+
+    <header class="mail-shell__topbar">
+      <ng-content select="[mail-topbar]"></ng-content>
+    </header>
+
+    <main class="mail-shell__content">
+      <ng-content select="[mail-content]"></ng-content>
+    </main>
+
+  </section>
+
+</div>

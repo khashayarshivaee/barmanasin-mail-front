@@ -1,0 +1,199 @@
+<div class="mail-sidebar">
+
+  <header class="mail-sidebar__header">
+
+    <a
+      class="brand"
+      href="/home"
+      aria-label="Barmanasin Mail"
+    >
+      <span class="brand__mark">
+        B
+      </span>
+
+      <span class="brand__identity">
+        <strong>BARMANASIN</strong>
+        <small>MAIL</small>
+      </span>
+    </a>
+
+  </header>
+
+
+  <div class="mail-sidebar__compose">
+
+    <button
+      type="button"
+      class="compose-button"
+      (click)="openCompose()"
+    >
+      <span>
+        Compose
+      </span>
+
+      <ion-icon
+        name="create-outline"
+        aria-hidden="true"
+      ></ion-icon>
+    </button>
+
+  </div>
+
+
+  <nav
+    class="mail-sidebar__navigation"
+    aria-label="Mailbox folders"
+  >
+
+    <span class="navigation-label">
+      MAILBOX
+    </span>
+
+
+    <button
+      type="button"
+      class="navigation-item"
+      [class.navigation-item--active]="activeFolder() === 'inbox'"
+      (click)="selectFolder('inbox')"
+    >
+      <span class="navigation-item__main">
+
+        <ion-icon
+          name="mail-outline"
+          aria-hidden="true"
+        ></ion-icon>
+
+        <span>
+          Inbox
+        </span>
+
+      </span>
+    </button>
+
+
+    <button
+      type="button"
+      class="navigation-item"
+      [class.navigation-item--active]="activeFolder() === 'starred'"
+      (click)="selectFolder('starred')"
+    >
+      <span class="navigation-item__main">
+
+        <ion-icon
+          name="star-outline"
+          aria-hidden="true"
+        ></ion-icon>
+
+        <span>
+          Starred
+        </span>
+
+      </span>
+    </button>
+
+
+    <button
+      type="button"
+      class="navigation-item"
+      [class.navigation-item--active]="activeFolder() === 'sent'"
+      (click)="selectFolder('sent')"
+    >
+      <span class="navigation-item__main">
+
+        <ion-icon
+          name="paper-plane-outline"
+          aria-hidden="true"
+        ></ion-icon>
+
+        <span>
+          Sent
+        </span>
+
+      </span>
+    </button>
+
+
+    <button
+      type="button"
+      class="navigation-item"
+      [class.navigation-item--active]="activeFolder() === 'drafts'"
+      (click)="selectFolder('drafts')"
+    >
+      <span class="navigation-item__main">
+
+        <ion-icon
+          name="file-tray-full-outline"
+          aria-hidden="true"
+        ></ion-icon>
+
+        <span>
+          Drafts
+        </span>
+
+      </span>
+    </button>
+
+
+    <button
+      type="button"
+      class="navigation-item"
+      [class.navigation-item--active]="activeFolder() === 'archive'"
+      (click)="selectFolder('archive')"
+    >
+      <span class="navigation-item__main">
+
+        <ion-icon
+          name="archive-outline"
+          aria-hidden="true"
+        ></ion-icon>
+
+        <span>
+          Archive
+        </span>
+
+      </span>
+    </button>
+
+
+    <button
+      type="button"
+      class="navigation-item"
+      [class.navigation-item--active]="activeFolder() === 'trash'"
+      (click)="selectFolder('trash')"
+    >
+      <span class="navigation-item__main">
+
+        <ion-icon
+          name="trash-outline"
+          aria-hidden="true"
+        ></ion-icon>
+
+        <span>
+          Trash
+        </span>
+
+      </span>
+    </button>
+
+  </nav>
+
+
+  <footer class="mail-sidebar__footer">
+
+    <div class="infrastructure-status">
+
+      <span class="infrastructure-status__dot"></span>
+
+      <span>
+        Mail infrastructure online
+      </span>
+
+    </div>
+
+    <span class="mail-sidebar__domain">
+      MAIL.BARMANASIN.COM
+    </span>
+
+  </footer>
+
+</div>

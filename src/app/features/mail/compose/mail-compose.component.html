@@ -1,0 +1,472 @@
+<section class="compose">
+
+  <header class="compose__toolbar">
+
+    <div class="compose__toolbar-copy">
+
+      <span class="compose__eyebrow">
+        NEW MESSAGE
+      </span>
+
+      <strong>
+        Compose
+      </strong>
+
+    </div>
+
+
+    <button
+      type="button"
+      class="compose__discard"
+      (click)="onDiscard()"
+      [disabled]="isSending()"
+    >
+      Discard
+    </button>
+
+  </header>
+
+
+
+  <form
+    class="compose__form"
+    [formGroup]="form"
+    (ngSubmit)="onSend()"
+  >
+
+
+    <div class="compose__content">
+
+
+      <div class="compose__meta">
+
+
+        <div class="compose__field">
+
+          <label>
+            To
+          </label>
+
+
+          <div class="compose__field-control">
+
+
+            <input
+              type="text"
+              autocomplete="off"
+              spellcheck="false"
+              formControlName="to"
+              placeholder="name@example.com"
+              [readonly]="isSending()"
+            />
+
+
+            <button
+              type="button"
+              class="compose__copies-toggle"
+              (click)="toggleCopyFields()"
+              [disabled]="isSending()"
+            >
+              Cc / Bcc
+            </button>
+
+
+          </div>
+
+
+        </div>
+
+
+
+        @if (
+          form.controls.to.touched &&
+          !form.controls.to.value.trim()
+          ) {
+
+          <p class="compose__validation">
+            Add at least one recipient.
+          </p>
+
+        }
+
+
+
+
+        @if (showCopyFields()) {
+
+
+          <div class="compose__field">
+
+            <label>
+              Cc
+            </label>
+
+
+            <div class="compose__field-control">
+
+              <input
+                type="text"
+                formControlName="cc"
+                placeholder="Optional"
+                [readonly]="isSending()"
+              />
+
+            </div>
+
+          </div>
+
+
+
+
+          <div class="compose__field">
+
+            <label>
+              Bcc
+            </label>
+
+
+            <div class="compose__field-control">
+
+              <input
+                type="text"
+                formControlName="bcc"
+                placeholder="Optional"
+                [readonly]="isSending()"
+              />
+
+            </div>
+
+          </div>
+
+
+        }
+
+
+
+
+
+        <div class="compose__field compose__field--subject">
+
+
+          <label>
+            Subject
+          </label>
+
+
+
+          <div class="compose__field-control">
+
+
+            <input
+              type="text"
+              formControlName="subject"
+              placeholder="Add a subject"
+              [readonly]="isSending()"
+            />
+
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+
+
+
+      <div class="compose__body">
+
+
+        <textarea
+          formControlName="body"
+          placeholder="Write your message..."
+          [readonly]="isSending()"
+        ></textarea>
+
+
+      </div>
+
+
+
+
+
+
+
+      <div class="compose__attachments">
+
+
+        <label
+          class="compose__attach-button"
+          [class.compose__attach-button--disabled]="isSending()"
+        >
+
+
+          <ion-icon
+            name="attach-outline"
+          ></ion-icon>
+
+
+          <span>
+            Attach files
+          </span>
+
+
+
+          <input
+            type="file"
+            multiple
+            (change)="onFilesSelected($event)"
+            [disabled]="isSending()"
+          />
+
+
+        </label>
+
+
+
+
+
+
+        @if (attachments().length) {
+
+
+          <div class="compose__attachment-list">
+
+
+            @for (
+              attachment of attachments();
+              track attachment.file.name + attachment.file.size + attachment.file.lastModified;
+              let index = $index
+              ) {
+
+
+
+              <div class="compose__attachment">
+
+
+
+                <div class="compose__attachment-copy">
+
+
+                  <strong>
+                    {{ attachment.file.name }}
+                  </strong>
+
+
+                  <span>
+                    {{ formatFileSize(attachment.file.size) }}
+                  </span>
+
+
+                </div>
+
+
+
+
+
+
+                <div class="compose__attachment-status">
+
+
+
+                  @if (
+                    attachment.status === 'uploading'
+                    ) {
+
+
+                    <div class="attachment-progress">
+
+
+                      <div class="attachment-progress__bar">
+
+
+                        <span
+                          [style.width.%]="attachment.progress"
+                        ></span>
+
+
+                      </div>
+
+
+
+                      <small>
+                        Uploading {{ attachment.progress }}%
+                      </small>
+
+
+                    </div>
+
+
+                  } @else if (
+                    attachment.status === 'failed'
+                    ) {
+
+
+                    <span class="attachment-failed">
+                      Upload failed
+                    </span>
+
+
+                  } @else {
+
+
+                    <span class="attachment-ready">
+
+                      ✓ Ready
+
+                    </span>
+
+
+                  }
+
+
+                </div>
+
+
+
+
+
+
+                <button
+
+                  type="button"
+
+                  class="compose__attachment-remove"
+
+                  (click)="removeAttachment(index)"
+
+                  [disabled]="isSending()"
+
+                >
+
+                  <ion-icon
+
+                    name="close-outline"
+
+                  ></ion-icon>
+
+
+                </button>
+
+
+
+
+              </div>
+
+
+            }
+
+
+          </div>
+
+
+        }
+
+
+
+      </div>
+
+
+
+    </div>
+
+
+
+
+
+
+
+    <footer class="compose__footer">
+
+
+      <div class="compose__footer-left">
+
+
+        <div class="compose__footer-note">
+          BARMANASIN MAIL
+        </div>
+
+
+
+        @if (sendStatus()) {
+
+
+          <div class="compose__status">
+
+            {{ sendStatus() }}
+
+          </div>
+
+
+        }
+
+
+      </div>
+
+
+
+
+
+
+
+      <button
+
+        type="submit"
+
+        class="compose__send"
+
+        [disabled]="isSending()"
+
+      >
+
+
+
+        @if (isSending()) {
+
+
+          <span>
+            Sending...
+          </span>
+
+
+
+          <span class="compose__send-loader"></span>
+
+
+
+        } @else {
+
+
+
+          <span>
+            Send message
+          </span>
+
+
+
+          <span class="compose__send-arrow">
+            ↗
+          </span>
+
+
+
+        }
+
+
+      </button>
+
+
+
+
+    </footer>
+
+
+
+  </form>
+
+
+
+</section>

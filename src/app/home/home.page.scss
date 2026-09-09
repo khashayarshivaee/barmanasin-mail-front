@@ -1,27 +1,18 @@
-#container {
-  text-align: center;
+:host {
+  display: block;
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  width: 100%;
+  height: 100%;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+.mail-page {
+  --background: #f3f1eb;
+  --color: #111412;
+
+  width: 100%;
+  height: 100%;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
+.mail-page::part(scroll) {
+  overflow: hidden;
 }

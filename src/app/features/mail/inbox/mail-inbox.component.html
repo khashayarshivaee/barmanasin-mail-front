@@ -1,0 +1,72 @@
+@if (selectedMessage()) {
+
+  <app-mail-message-view
+    [message]="selectedMessage()!"
+    (back)="closeMessage()"
+    (archive)="archiveMessage($event)"
+    (trash)="trashMessage($event)"
+  ></app-mail-message-view>
+
+} @else if (isMessageLoading()) {
+
+  <section class="message-state">
+
+    <div class="message-state__indicator"></div>
+
+    <p>
+      Opening message...
+    </p>
+
+  </section>
+
+} @else if (messageError()) {
+
+  <section class="message-state message-state--error">
+
+    <span class="message-state__code">
+      MESSAGE
+    </span>
+
+    <h2>
+      Unable to open message.
+    </h2>
+
+    <p>
+      The message could not be loaded from the mailbox.
+    </p>
+
+    <div class="message-state__actions">
+
+      <button
+        type="button"
+        (click)="closeMessage()"
+      >
+        Back to inbox
+      </button>
+
+      <button
+        type="button"
+        class="message-state__retry"
+        (click)="retryMessage()"
+      >
+        Try again
+      </button>
+
+    </div>
+
+  </section>
+
+} @else {
+
+  <app-mail-message-list
+    [title]="folderTitle()"
+    [eyebrow]="folderEyebrow()"
+    [toolbarLabel]="folderToolbarLabel()"
+    [messages]="messages()"
+    [selectedMessageId]="selectedMessageId()"
+    (messageSelect)="openMessage($event)"
+    (starChange)="toggleMessageStar($event)"
+    (refresh)="loadCurrentFolder()"
+  ></app-mail-message-list>
+
+}

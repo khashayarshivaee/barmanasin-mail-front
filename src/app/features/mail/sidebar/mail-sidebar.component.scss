@@ -1,0 +1,297 @@
+:host {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+}
+
+button {
+  font: inherit;
+}
+
+
+/* -------------------------------------------------------
+   SIDEBAR
+------------------------------------------------------- */
+
+.mail-sidebar {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 28px 20px 22px;
+
+  color: #f1eee7;
+
+  background:
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(147, 157, 149, 0.07),
+      transparent 30%
+    ),
+    #101310;
+}
+
+
+/* -------------------------------------------------------
+   BRAND
+------------------------------------------------------- */
+
+.mail-sidebar__header {
+  flex: 0 0 auto;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+
+  color: inherit;
+  text-decoration: none;
+}
+
+.brand__mark {
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid rgba(241, 238, 231, 0.25);
+
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.brand__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.brand__identity strong {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+
+.brand__identity small {
+  color: rgba(241, 238, 231, 0.38);
+
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+}
+
+
+/* -------------------------------------------------------
+   COMPOSE
+------------------------------------------------------- */
+
+.mail-sidebar__compose {
+  margin-top: 34px;
+}
+
+.compose-button {
+  width: 100%;
+  height: 50px;
+
+  padding: 0 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border: 0;
+  outline: 0;
+
+  background: #eeece5;
+  color: #111411;
+
+  cursor: pointer;
+
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.compose-button:hover {
+  background: #ffffff;
+}
+
+.compose-button:active {
+  transform: scale(0.985);
+}
+
+.compose-button span {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.compose-button ion-icon {
+  font-size: 17px;
+}
+
+
+/* -------------------------------------------------------
+   NAVIGATION
+------------------------------------------------------- */
+
+.mail-sidebar__navigation {
+  margin-top: 34px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.navigation-label {
+  margin: 0 12px 12px;
+
+  color: rgba(241, 238, 231, 0.28);
+
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+}
+
+.navigation-item {
+  position: relative;
+
+  width: 100%;
+  min-height: 44px;
+
+  padding: 0 12px;
+
+  display: flex;
+  align-items: center;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+  color: rgba(241, 238, 231, 0.56);
+
+  cursor: pointer;
+
+  transition:
+    color 160ms ease,
+    background 160ms ease;
+}
+
+.navigation-item::before {
+  content: '';
+
+  position: absolute;
+  left: 0;
+  top: 50%;
+
+  width: 2px;
+  height: 0;
+
+  background: #d6ddd5;
+
+  transform: translateY(-50%);
+
+  transition: height 180ms ease;
+}
+
+.navigation-item:hover {
+  color: rgba(241, 238, 231, 0.92);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.navigation-item--active {
+  color: #f3f0e8;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.navigation-item--active::before {
+  height: 20px;
+}
+
+.navigation-item__main {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navigation-item ion-icon {
+  width: 17px;
+
+  flex: 0 0 17px;
+
+  font-size: 17px;
+
+  opacity: 0.8;
+}
+
+.navigation-item span {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.015em;
+}
+
+
+/* -------------------------------------------------------
+   FOOTER
+------------------------------------------------------- */
+
+.mail-sidebar__footer {
+  margin-top: auto;
+  padding: 18px 10px 0;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.infrastructure-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: rgba(241, 238, 231, 0.42);
+
+  font-size: 8px;
+}
+
+.infrastructure-status__dot {
+  width: 5px;
+  height: 5px;
+
+  flex: 0 0 auto;
+
+  border-radius: 50%;
+
+  background: #798b7d;
+
+  box-shadow:
+    0 0 0 4px rgba(121, 139, 125, 0.08);
+}
+
+.mail-sidebar__domain {
+  display: block;
+
+  margin-top: 10px;
+
+  color: rgba(241, 238, 231, 0.2);
+
+  font-size: 7px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+}
+
+
+/* -------------------------------------------------------
+   SMALL DESKTOP
+------------------------------------------------------- */
+
+@media (max-width: 1100px) {
+  .mail-sidebar {
+    padding-inline: 16px;
+  }
+}

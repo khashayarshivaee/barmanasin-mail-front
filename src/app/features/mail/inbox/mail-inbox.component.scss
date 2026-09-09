@@ -1,0 +1,105 @@
+:host {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+}
+
+.message-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 40px;
+
+  text-align: center;
+
+  background: #f3f1eb;
+  color: #111412;
+}
+
+.message-state__indicator {
+  width: 22px;
+  height: 22px;
+
+  margin-bottom: 18px;
+
+  border: 1px solid rgba(17, 20, 18, 0.16);
+  border-top-color: #111412;
+  border-radius: 50%;
+
+  animation: message-state-spin 0.8s linear infinite;
+}
+
+.message-state > p {
+  margin: 0;
+
+  font-size: 12px;
+  letter-spacing: 0.04em;
+
+  color: rgba(17, 20, 18, 0.48);
+}
+
+.message-state__code {
+  margin-bottom: 14px;
+
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+
+  color: rgba(17, 20, 18, 0.4);
+}
+
+.message-state h2 {
+  margin: 0;
+
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.message-state--error > p {
+  max-width: 360px;
+
+  margin-top: 10px;
+
+  line-height: 1.6;
+}
+
+.message-state__actions {
+  display: flex;
+  gap: 10px;
+
+  margin-top: 24px;
+}
+
+.message-state__actions button {
+  padding: 10px 16px;
+
+  border: 1px solid rgba(17, 20, 18, 0.14);
+  border-radius: 4px;
+
+  background: transparent;
+  color: #111412;
+
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.message-state__actions .message-state__retry {
+  background: #171b18;
+  color: #f3f1eb;
+}
+
+@keyframes message-state-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
