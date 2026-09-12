@@ -4,6 +4,7 @@ import {
   effect,
   inject,
   signal,
+  output
 } from '@angular/core';
 
 import {
@@ -90,6 +91,9 @@ export class MailInboxComponent {
   readonly messageError =
     signal('');
 
+  readonly draftEditRequested =
+    output<MailMessageDetail>();
+
   constructor() {
     effect(() => {
       const folder =
@@ -134,6 +138,22 @@ export class MailInboxComponent {
         )
         .subscribe({
           next: (response) => {
+
+            if (
+              response.message.mailbox === 'Drafts'
+            ) {
+              this.selectedMessageId.set(null);
+
+              this.selectedMessage.set(null);
+
+              this.isMessageLoading.set(false);
+
+              this.draftEditRequested.emit(
+                response.message,
+              );
+
+              return;
+            }
             this.selectedMessage.set(
               response.message,
             );
@@ -306,7 +326,7 @@ export class MailInboxComponent {
       case 'drafts':
         return 'Drafts';
 
-      case 'archive':
+        case 'archive':
         return 'Archive';
 
       case 'trash':
@@ -325,6 +345,9 @@ export class MailInboxComponent {
       case 'starred':
         return 'FLAGGED MAIL';
 
+      case 'drafts':
+        return 'DRAFT MAIL';
+
       case 'archive':
         return 'ARCHIVED MAIL';
 
@@ -342,6 +365,9 @@ export class MailInboxComponent {
       ) {
       case 'starred':
         return 'Starred messages';
+
+      case 'drafts':
+        return 'Saved drafts';
 
       case 'archive':
         return 'Archived messages';
@@ -363,6 +389,7 @@ export class MailInboxComponent {
       folder !== 'inbox' &&
       folder !== 'starred' &&
       folder !== 'sent' &&
+      folder !== 'drafts' &&
       folder !== 'archive' &&
       folder !== 'trash'
     ) {
@@ -375,11 +402,13 @@ export class MailInboxComponent {
         ? this.inboxService.getStarred()
         : folder === 'sent'
           ? this.inboxService.getSent()
-          : folder === 'archive'
-            ? this.inboxService.getArchive()
-            : folder === 'trash'
-              ? this.inboxService.getTrash()
-              : this.inboxService.getInbox();
+          : folder === 'drafts'
+            ? this.inboxService.getDrafts()
+            : folder === 'archive'
+              ? this.inboxService.getArchive()
+              : folder === 'trash'
+                ? this.inboxService.getTrash()
+                : this.inboxService.getInbox();
 
     this.folderRequest =
       source

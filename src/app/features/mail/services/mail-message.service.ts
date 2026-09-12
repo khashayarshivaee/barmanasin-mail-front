@@ -15,10 +15,17 @@ export interface MailMessageBody {
   html: string;
 }
 
+export interface MailAttachment {
+  part: string;
+  filename: string;
+  content_type: string;
+  size: number;
+}
+
 export interface MailMessageDetail {
   mailbox: string;
   uid: string;
-
+  attachments: MailAttachment[];
   flags: string[];
   unread: boolean;
   starred: boolean;
@@ -29,6 +36,7 @@ export interface MailMessageDetail {
 
   to: string;
   cc: string;
+  bcc: string;
   reply_to: string;
 
   subject: string;
@@ -186,4 +194,28 @@ export class MailMessageService {
         timeout(12_000),
       );
   }
+
+  downloadAttachment(
+    uid: string,
+    part: string,
+    folder = 'INBOX',
+  ): Observable<Blob> {
+    const params = new HttpParams()
+      .set('folder', folder);
+
+    return this.http
+      .get(
+        `${environment.apiBaseUrl}/api/mail/messages/${encodeURIComponent(uid)}/attachments/${encodeURIComponent(part)}`,
+        {
+          withCredentials: true,
+          params,
+          responseType: 'blob',
+        },
+      )
+      .pipe(
+        timeout(30_000),
+      );
+  }
+
+
 }

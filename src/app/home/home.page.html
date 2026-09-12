@@ -22,7 +22,9 @@
         mail-content
         [isSending]="isSending()"
         [sendStatus]="sendStatus()"
+        [editDraft]="editDraft()"
         (discard)="closeCompose()"
+        (draftSaved)="onDraftSaved()"
         (sendRequested)="sendMail($event)"
       ></app-mail-compose>
 
@@ -30,6 +32,7 @@
 
       <app-mail-inbox
         mail-content
+        (draftEditRequested)="openDraft($event)"
       ></app-mail-inbox>
 
     }

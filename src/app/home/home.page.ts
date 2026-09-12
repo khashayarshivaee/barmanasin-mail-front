@@ -25,7 +25,12 @@ import {
 import {
   MailComposeComponent,
   MailComposeDraft,
+  MailComposeEditDraft,
 } from '../features/mail/compose/mail-compose.component';
+
+import {
+  MailMessageDetail,
+} from '../features/mail/services/mail-message.service';
 
 import {
   MailSendService,
@@ -68,16 +73,78 @@ export class HomePage {
   readonly sendStatus =
     signal('');
 
+  readonly editDraft =
+    signal<MailComposeEditDraft | null>(
+      null,
+    );
+
 
   openCompose(): void {
+    this.editDraft.set(null);
+
     this.sendStatus.set('');
+
     this.isComposeOpen.set(true);
   }
 
-
   closeCompose(): void {
     this.isComposeOpen.set(false);
+
+    this.editDraft.set(null);
+
     this.sendStatus.set('');
+  }
+
+  openDraft(
+    message: MailMessageDetail,
+  ): void {
+
+    this.sendStatus.set('');
+
+
+    this.editDraft.set({
+      uid:
+      message.uid,
+
+      to:
+      message.to,
+
+      cc:
+      message.cc,
+
+      bcc:
+      message.bcc,
+
+      subject:
+        message.subject === '(No subject)'
+          ? ''
+          : message.subject,
+
+      body:
+      message.body.text,
+
+      attachments:
+        message.attachments.map(
+          attachment => ({
+            part:
+            attachment.part,
+
+            filename:
+            attachment.filename,
+
+            content_type:
+            attachment.content_type,
+
+            size:
+            attachment.size,
+          }),
+        ),
+    });
+
+
+    this.isComposeOpen.set(
+      true,
+    );
   }
 
 
@@ -140,6 +207,34 @@ export class HomePage {
       },
     );
 
+    if (draft.draftUid) {
+
+      formData.append(
+        'draft_uid',
+        draft.draftUid,
+      );
+
+
+      formData.append(
+        'existing_attachments_provided',
+        '1',
+      );
+
+
+      draft.existingAttachments
+        .forEach(
+          part => {
+
+            formData.append(
+              'existing_attachments[]',
+              part,
+            );
+
+          },
+        );
+
+    }
+
 
     this.isSending.set(true);
     this.sendStatus.set(
@@ -191,6 +286,16 @@ export class HomePage {
         },
 
       });
+  }
+
+  onDraftSaved(): void {
+
+    this.folderState.setFolder(
+      'drafts',
+    );
+
+    this.closeCompose();
+
   }
 
 }

@@ -1,6 +1,7 @@
 import {
   Component,
   computed,
+  effect,
   inject,
   input,
   OnDestroy,
@@ -12,7 +13,10 @@ import {
   HttpEventType,
 } from '@angular/common/http';
 
+
+
 import {
+  Observable,
   Subscription,
 } from 'rxjs';
 
@@ -34,6 +38,10 @@ import {
 import {
   MailAttachmentService,
 } from '../services/mail-attachment.service';
+
+import {
+  MailDraftService,
+} from '../services/mail-draft.service';
 
 
 
@@ -68,6 +76,30 @@ export interface MailComposeDraft {
 
   attachments: number[];
 
+  draftUid: string | null;
+
+  existingAttachments: string[];
+
+}
+export interface MailComposeExistingAttachment {
+  part: string;
+  filename: string;
+  content_type: string;
+  size: number;
+}
+
+
+export interface MailComposeEditDraft {
+  uid: string;
+
+  to: string;
+  cc: string;
+  bcc: string;
+
+  subject: string;
+  body: string;
+
+  attachments: MailComposeExistingAttachment[];
 }
 
 
@@ -88,7 +120,17 @@ export class MailComposeComponent implements OnDestroy {
   private readonly attachmentService =
     inject(MailAttachmentService);
 
+  private readonly draftService =
+    inject(MailDraftService);
 
+  readonly isSavingDraft =
+    signal(false);
+
+  readonly draftStatus =
+    signal('');
+
+  readonly isDeletingDraft =
+    signal(false);
 
   private readonly uploadSubscriptions =
     new Map<File, Subscription>();
@@ -110,6 +152,9 @@ export class MailComposeComponent implements OnDestroy {
   readonly sendRequested =
     output<MailComposeDraft>();
 
+  readonly draftSaved =
+    output<void>();
+
 
 
   readonly isSending =
@@ -119,6 +164,11 @@ export class MailComposeComponent implements OnDestroy {
 
   readonly sendStatus =
     input('');
+
+  readonly editDraft =
+    input<MailComposeEditDraft | null>(
+      null,
+    );
 
 
 
@@ -130,7 +180,8 @@ export class MailComposeComponent implements OnDestroy {
   readonly attachments =
     signal<MailAttachment[]>([]);
 
-
+  readonly existingAttachments =
+    signal<MailComposeExistingAttachment[]>([]);
 
 
 
@@ -200,6 +251,52 @@ export class MailComposeComponent implements OnDestroy {
       attachOutline,
 
       closeOutline,
+
+    });
+
+
+    effect(() => {
+
+      const draft =
+        this.editDraft();
+
+
+      if (!draft) {
+        return;
+      }
+
+
+      this.form.patchValue({
+
+        to:
+        draft.to,
+
+        cc:
+        draft.cc,
+
+        bcc:
+        draft.bcc,
+
+        subject:
+        draft.subject,
+
+        body:
+        draft.body,
+
+      });
+
+      this.existingAttachments.set(
+        draft.attachments ?? [],
+      );
+
+
+      this.showCopyFields.set(
+        Boolean(
+          draft.cc.trim()
+          ||
+          draft.bcc.trim()
+        ),
+      );
 
     });
 
@@ -876,51 +973,213 @@ export class MailComposeComponent implements OnDestroy {
 
   }
 
-
-
-
-
-  onDiscard(): void {
-
+  removeExistingAttachment(
+    part: string,
+  ): void {
 
     if (
       this.isSending()
+      ||
+      this.isSavingDraft()
     ) {
-
       return;
-
     }
 
 
+    this.existingAttachments.update(
+      attachments =>
+        attachments.filter(
+          attachment =>
+            attachment.part !== part,
+        ),
+    );
 
-    this.uploadSubscriptions
-      .forEach(
-        subscription =>
-          subscription.unsubscribe(),
+  }
+
+
+  onSaveDraft(): void {
+
+    if (
+      this.isSending()
+      || this.isSavingDraft()
+      || this.isDeletingDraft()
+    ) {
+      return;
+    }
+
+
+    const uploading =
+      this.attachments()
+        .some(
+          item =>
+            item.status === 'uploading',
+        );
+
+
+    if (uploading) {
+      this.draftStatus.set(
+        'Wait for attachments to finish uploading.',
+      );
+
+      return;
+    }
+
+
+    const value =
+      this.form.getRawValue();
+
+
+    const attachmentIds =
+      this.attachments()
+        .filter(
+          item =>
+            item.status === 'ready'
+            &&
+            item.id !== null,
+        )
+        .map(
+          item =>
+            item.id as number,
+        );
+
+
+    const hasContent =
+      Boolean(
+        value.to.trim()
+        ||
+        value.cc.trim()
+        ||
+        value.bcc.trim()
+        ||
+        value.subject.trim()
+        ||
+        value.body.trim()
+        ||
+        attachmentIds.length
       );
 
 
+    if (!hasContent) {
+      this.draftStatus.set(
+        'Nothing to save.',
+      );
 
-    this.uploadSubscriptions.clear();
-
-
-
-    this.clearAllProgressTimers();
-
-
-
-    this.form.reset();
+      return;
+    }
 
 
-    this.attachments.set([]);
+    this.isSavingDraft.set(
+      true,
+    );
+
+    this.draftStatus.set(
+      'Saving draft...',
+    );
 
 
-    this.showCopyFields.set(false);
+    const currentDraft =
+      this.editDraft();
 
 
+    const payload = {
 
-    this.discard.emit();
+      to:
+        value.to.trim(),
 
+      cc:
+        value.cc.trim(),
+
+      bcc:
+        value.bcc.trim(),
+
+      subject:
+        value.subject.trim(),
+
+      body:
+      value.body,
+
+      attachments:
+      attachmentIds,
+
+      existing_attachments:
+        this.existingAttachments()
+          .map(
+            attachment =>
+              attachment.part,
+          ),
+
+    };
+
+
+    const request: Observable<unknown> =
+      currentDraft
+
+        ? this.draftService.updateDraft(
+          currentDraft.uid,
+          payload,
+        )
+
+        : this.draftService.saveDraft(
+          payload,
+        );
+
+
+    request.subscribe({
+
+        next: () => {
+
+          this.isSavingDraft.set(
+            false,
+          );
+
+          this.draftStatus.set(
+            currentDraft
+              ? 'Draft updated.'
+              : 'Draft saved.',
+          );
+
+          this.uploadSubscriptions
+            .forEach(
+              subscription =>
+                subscription.unsubscribe(),
+            );
+
+          this.uploadSubscriptions.clear();
+
+          this.clearAllProgressTimers();
+
+          this.form.reset();
+
+          this.attachments.set([]);
+          this.existingAttachments.set([]);
+          this.showCopyFields.set(
+            false,
+          );
+
+
+          this.draftSaved.emit();
+
+        },
+
+
+        error: (error) => {
+
+          console.error(
+            '[Mail] Unable to save draft.',
+            error,
+          );
+
+          this.isSavingDraft.set(
+            false,
+          );
+
+          this.draftStatus.set(
+            'Unable to save draft.',
+          );
+
+        },
+
+      });
 
   }
 
@@ -928,7 +1187,142 @@ export class MailComposeComponent implements OnDestroy {
 
 
 
+  onDiscard(): void {
+
+    if (
+      this.isSending()
+      ||
+      this.isSavingDraft()
+      ||
+      this.isDeletingDraft()
+    ) {
+      return;
+    }
+
+
+    const currentDraft =
+      this.editDraft();
+
+
+    /*
+     * New compose:
+     * nothing has been stored in Drafts yet.
+     */
+    if (!currentDraft) {
+
+      this.uploadSubscriptions
+        .forEach(
+          subscription =>
+            subscription.unsubscribe(),
+        );
+
+      this.uploadSubscriptions.clear();
+
+      this.clearAllProgressTimers();
+
+      this.form.reset();
+
+      this.attachments.set([]);
+
+      this.existingAttachments.set([]);
+
+      this.showCopyFields.set(
+        false,
+      );
+
+      this.draftStatus.set('');
+
+      this.discard.emit();
+
+      return;
+    }
+
+
+    /*
+     * Existing Draft:
+     * delete it from Dovecot first.
+     */
+    this.isDeletingDraft.set(
+      true,
+    );
+
+    this.draftStatus.set(
+      'Deleting draft...',
+    );
+
+
+    this.draftService
+      .deleteDraft(
+        currentDraft.uid,
+      )
+      .subscribe({
+
+        next: () => {
+
+          this.isDeletingDraft.set(
+            false,
+          );
+
+          this.uploadSubscriptions
+            .forEach(
+              subscription =>
+                subscription.unsubscribe(),
+            );
+
+          this.uploadSubscriptions.clear();
+
+          this.clearAllProgressTimers();
+
+          this.form.reset();
+
+          this.attachments.set([]);
+
+          this.existingAttachments.set([]);
+
+          this.showCopyFields.set(
+            false,
+          );
+
+          this.draftStatus.set('');
+
+          this.discard.emit();
+        },
+
+
+        error: (error) => {
+
+          console.error(
+            '[Mail] Unable to delete draft.',
+            error,
+          );
+
+          this.isDeletingDraft.set(
+            false,
+          );
+
+          this.draftStatus.set(
+            'Unable to delete draft.',
+          );
+        },
+
+      });
+  }
+
+
+
+
+
   onSend(): void {
+
+    if (
+      this.isSending()
+      ||
+      this.isSavingDraft()
+      ||
+      this.isDeletingDraft()
+    ) {
+      return;
+    }
 
 
     const draft =
@@ -987,7 +1381,7 @@ export class MailComposeComponent implements OnDestroy {
 
 
 
-
+    this.draftStatus.set('');
     this.sendRequested.emit({
 
       to:
@@ -1012,6 +1406,16 @@ export class MailComposeComponent implements OnDestroy {
 
       attachments:
       attachmentIds,
+
+      draftUid:
+        this.editDraft()?.uid ?? null,
+
+      existingAttachments:
+        this.existingAttachments()
+          .map(
+            attachment =>
+              attachment.part,
+          ),
 
     });
 

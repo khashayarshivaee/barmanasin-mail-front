@@ -37,29 +37,31 @@
             Archive
           </span>
         </button>
+      }
 
-        @if (canTrash()) {
-          <button
-            type="button"
-            class="message-view__action"
-            aria-label="Move message to Trash"
-            title="Move to Trash"
-            (click)="onTrash()"
-          >
-            <ion-icon
-              name="trash-outline"
-              aria-hidden="true"
-            ></ion-icon>
 
-            <span>
-      Trash
-    </span>
-          </button>
-        }
+      @if (canTrash()) {
+        <button
+          type="button"
+          class="message-view__action"
+          aria-label="Move message to Trash"
+          title="Move to Trash"
+          (click)="onTrash()"
+        >
+          <ion-icon
+            name="trash-outline"
+            aria-hidden="true"
+          ></ion-icon>
+
+          <span>
+            Trash
+          </span>
+        </button>
       }
 
 
       <div class="message-view__toolbar-meta">
+
         <span>
           MESSAGE
         </span>
@@ -67,6 +69,7 @@
         <strong>
           #{{ message().uid }}
         </strong>
+
       </div>
 
     </div>
@@ -106,6 +109,7 @@
               }}
             </strong>
 
+
             <span class="message-view__date">
               {{ message().date }}
             </span>
@@ -119,6 +123,7 @@
 
 
           <p class="message-view__recipient">
+
             to {{ message().to }}
 
             @if (message().cc) {
@@ -126,6 +131,7 @@
                 · cc {{ message().cc }}
               </span>
             }
+
           </p>
 
         </div>
@@ -141,6 +147,223 @@
     <div class="message-view__body">
       {{ readableBody() }}
     </div>
+
+
+    @if (message().attachments.length) {
+
+      <section class="message-view__attachments">
+
+        <header class="message-view__attachments-header">
+
+          <div>
+            <p class="message-view__attachments-eyebrow">
+              Attachments
+            </p>
+
+            <p class="message-view__attachments-count">
+              {{ message().attachments.length }}
+              @if (message().attachments.length === 1) {
+                file
+              } @else {
+                files
+              }
+            </p>
+          </div>
+
+        </header>
+
+
+        <div class="message-view__attachments-grid">
+
+          @for (
+            attachment of message().attachments;
+            track attachment.part
+            ) {
+
+            <ion-card
+              class="message-view__attachment-card"
+            >
+
+              @if (isImageAttachment(attachment)) {
+
+                <div
+                  class="message-view__attachment-media"
+                >
+
+                  @if (
+                    attachmentPreviewLoading(
+                      attachment
+                    )
+                    ) {
+
+                    <div
+                      class="message-view__attachment-skeleton"
+                      aria-label="Loading image preview"
+                    >
+
+                      <ion-skeleton-text
+                        [animated]="true"
+                      ></ion-skeleton-text>
+
+                      <div
+                        class="message-view__attachment-skeleton-icon"
+                      >
+                        <ion-icon
+                          name="image-outline"
+                        ></ion-icon>
+                      </div>
+
+                    </div>
+
+                  } @else if (
+                    attachmentPreviewFailed(
+                      attachment
+                    )
+                    ) {
+
+                    <div
+                      class="message-view__attachment-placeholder"
+                    >
+
+                      <ion-icon
+                        name="image-outline"
+                      ></ion-icon>
+
+                      <span>
+                        Preview unavailable
+                      </span>
+
+                    </div>
+
+                  } @else {
+
+                    <img
+                      class="message-view__attachment-preview"
+                      [src]="attachmentPreviewUrl(attachment)"
+                      [alt]="attachment.filename"
+                    />
+
+                  }
+
+
+                  <button
+                    type="button"
+                    class="message-view__attachment-download"
+                    title="Download"
+                    aria-label="Download attachment"
+                    (click)="downloadAttachment(attachment)"
+                  >
+                    <ion-icon
+                      name="download-outline"
+                    ></ion-icon>
+                  </button>
+
+                </div>
+
+              } @else {
+
+                <div
+                  class="message-view__attachment-file-preview"
+                >
+
+                  <div
+                    class="message-view__attachment-file-icon"
+                  >
+                    <ion-icon
+                      [name]="attachmentIcon(attachment)"
+                    ></ion-icon>
+                  </div>
+
+
+                  <span
+                    class="message-view__attachment-file-type"
+                  >
+                    {{ attachmentTypeLabel(attachment) }}
+                  </span>
+
+
+                  <button
+                    type="button"
+                    class="message-view__attachment-download"
+                    title="Download"
+                    aria-label="Download attachment"
+                    (click)="downloadAttachment(attachment)"
+                  >
+                    <ion-icon
+                      name="download-outline"
+                    ></ion-icon>
+                  </button>
+
+                </div>
+
+              }
+
+
+              <div
+                class="message-view__attachment-details"
+              >
+
+                <div
+                  class="message-view__attachment-copy"
+                >
+
+                  <strong
+                    class="message-view__attachment-name"
+                    [title]="attachment.filename"
+                  >
+                    {{
+                      attachment.filename ||
+                      'Attachment'
+                    }}
+                  </strong>
+
+
+                  <div
+                    class="message-view__attachment-meta"
+                  >
+
+                    <span>
+                      {{ attachmentTypeLabel(attachment) }}
+                    </span>
+
+                    @if (
+                      formattedAttachmentSize(
+                        attachment.size
+                      )
+                      ) {
+
+                      <span
+                        class="message-view__attachment-meta-dot"
+                        aria-hidden="true"
+                      >
+                        ·
+                      </span>
+
+                      <span>
+                        {{
+                          formattedAttachmentSize(
+                            attachment.size
+                          )
+                        }}
+                      </span>
+
+                    }
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </ion-card>
+
+          }
+
+        </div>
+
+      </section>
+
+    }
 
   </article>
 

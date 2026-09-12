@@ -124,6 +124,60 @@ button {
     rgba(255, 255, 255, 0.48);
 }
 
+.compose__toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+.compose__save-draft {
+  min-height: 34px;
+
+  padding:
+    0 12px;
+
+  border:
+    1px solid rgba(17, 20, 18, 0.1);
+
+  background:
+    rgba(255, 255, 255, 0.38);
+
+  color:
+    rgba(17, 20, 18, 0.72);
+
+  font-size: 10px;
+  font-weight: 600;
+
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  transition:
+    color 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    opacity 160ms ease;
+}
+
+
+.compose__save-draft:hover:not(:disabled) {
+  color:
+    #111412;
+
+  border-color:
+    rgba(17, 20, 18, 0.18);
+
+  background:
+    rgba(255, 255, 255, 0.72);
+}
+
+
+.compose__save-draft:disabled,
+.compose__discard:disabled {
+  opacity: 0.48;
+  cursor: default;
+}
+
 
 /* -------------------------------------------------------
    FORM
@@ -383,6 +437,22 @@ button {
 ------------------------------------------------------- */
 
 @media (max-width: 760px) {
+
+  .compose__toolbar-actions {
+    gap: 6px;
+  }
+
+
+  .compose__save-draft,
+  .compose__discard {
+    min-height: 32px;
+
+    padding:
+      0 9px;
+
+    font-size: 9px;
+  }
+
   .compose__toolbar {
     min-height: 60px;
 
@@ -636,6 +706,81 @@ button {
 
   color:
     rgba(17,20,18,0.55);
+
+}
+
+/* -------------------------------------------------------
+   EXISTING DRAFT ATTACHMENTS
+------------------------------------------------------- */
+
+.compose__existing-attachments {
+  margin-top: 18px;
+}
+
+
+.compose__existing-attachments-label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color:
+    rgba(17, 20, 18, 0.42);
+
+  font-size: 9px;
+  font-weight: 600;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+
+.compose__attachment--existing {
+  background:
+    rgba(255, 255, 255, 0.5);
+
+  border-color:
+    rgba(17, 20, 18, 0.1);
+}
+
+
+.compose__attachment--existing
+.compose__attachment-copy strong {
+  color:
+    rgba(17, 20, 18, 0.82);
+}
+
+
+.compose__attachment--existing
+.compose__attachment-copy span {
+  color:
+    rgba(17, 20, 18, 0.42);
+}
+
+
+.compose__attachment--existing
+.attachment-ready {
+  color:
+    #2d6a45;
+}
+
+
+.compose__attachment--existing
+.compose__attachment-remove:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+
+@media (max-width: 760px) {
+
+  .compose__existing-attachments {
+    margin-top: 16px;
+  }
+
+
+  .compose__existing-attachments-label {
+    margin-bottom: 7px;
+  }
 
 }
 /* -------------------------------------------------------

@@ -1,14 +1,28 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, timeout } from 'rxjs';
+import {
+  inject,
+  Injectable,
+} from '@angular/core';
 
-import { environment } from '../../../../environments/environment';
+import {
+  HttpClient,
+} from '@angular/common/http';
+
+import {
+  Observable,
+  timeout,
+} from 'rxjs';
+
+import {
+  environment,
+} from '../../../../environments/environment';
+
 
 export interface MailInboxSender {
   name: string;
   address: string;
   raw: string;
 }
+
 
 export interface MailInboxMessage {
   mailbox: string;
@@ -25,6 +39,7 @@ export interface MailInboxMessage {
   date: string;
 }
 
+
 export interface MailInboxResponse {
   mailbox: {
     address: string;
@@ -39,11 +54,15 @@ export interface MailInboxResponse {
   };
 }
 
+
 @Injectable({
   providedIn: 'root',
 })
 export class MailInboxService {
-  private readonly http = inject(HttpClient);
+
+  private readonly http =
+    inject(HttpClient);
+
 
   getInbox(): Observable<MailInboxResponse> {
     return this.http
@@ -58,6 +77,7 @@ export class MailInboxService {
       );
   }
 
+
   getSent(): Observable<MailInboxResponse> {
     return this.http
       .get<MailInboxResponse>(
@@ -70,6 +90,21 @@ export class MailInboxService {
         timeout(12_000),
       );
   }
+
+
+  getDrafts(): Observable<MailInboxResponse> {
+    return this.http
+      .get<MailInboxResponse>(
+        `${environment.apiBaseUrl}/api/mail/drafts`,
+        {
+          withCredentials: true,
+        },
+      )
+      .pipe(
+        timeout(12_000),
+      );
+  }
+
 
   getStarred(): Observable<MailInboxResponse> {
     return this.http
@@ -84,6 +119,7 @@ export class MailInboxService {
       );
   }
 
+
   getArchive(): Observable<MailInboxResponse> {
     return this.http
       .get<MailInboxResponse>(
@@ -97,6 +133,7 @@ export class MailInboxService {
       );
   }
 
+
   getTrash(): Observable<MailInboxResponse> {
     return this.http
       .get<MailInboxResponse>(
@@ -109,4 +146,5 @@ export class MailInboxService {
         timeout(12_000),
       );
   }
+
 }
