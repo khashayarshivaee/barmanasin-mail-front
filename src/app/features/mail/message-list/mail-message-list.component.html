@@ -28,6 +28,8 @@
     <button
       type="button"
       class="refresh-button"
+      [class.refresh-button--loading]="isRefreshing()"
+      [disabled]="isRefreshing()"
       (click)="refreshMailbox()"
       aria-label="Refresh mailbox"
     >
@@ -56,7 +58,11 @@
   </div>
 
 
-  <div class="message-list__body">
+  <div
+    class="message-list__body"
+    #messageListBody
+    (scroll)="saveScrollPosition()"
+  >
 
     @if (messages().length === 0) {
 

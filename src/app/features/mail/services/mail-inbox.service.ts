@@ -9,12 +9,23 @@ import {
 
 import {
   Observable,
+  of,
+  tap,
   timeout,
 } from 'rxjs';
 
 import {
   environment,
 } from '../../../../environments/environment';
+
+
+export type MailCachedFolder =
+  | 'inbox'
+  | 'sent'
+  | 'drafts'
+  | 'starred'
+  | 'archive'
+  | 'trash';
 
 
 export interface MailInboxSender {
@@ -55,95 +66,167 @@ export interface MailInboxResponse {
 }
 
 
+interface MailFolderCacheEntry {
+  response: MailInboxResponse;
+  storedAt: number;
+}
+
+
 @Injectable({
   providedIn: 'root',
 })
 export class MailInboxService {
 
+  private static readonly CACHE_TTL =
+    30_000;
+
+
   private readonly http =
     inject(HttpClient);
 
 
-  getInbox(): Observable<MailInboxResponse> {
-    return this.http
-      .get<MailInboxResponse>(
-        `${environment.apiBaseUrl}/api/mail/inbox`,
-        {
-          withCredentials: true,
-        },
-      )
-      .pipe(
-        timeout(12_000),
-      );
+  private readonly cache =
+    new Map<
+      MailCachedFolder,
+      MailFolderCacheEntry
+    >();
+
+
+  getInbox(
+    forceRefresh = false,
+  ): Observable<MailInboxResponse> {
+    return this.getFolder(
+      'inbox',
+      '/api/mail/inbox',
+      forceRefresh,
+    );
   }
 
 
-  getSent(): Observable<MailInboxResponse> {
-    return this.http
-      .get<MailInboxResponse>(
-        `${environment.apiBaseUrl}/api/mail/sent`,
-        {
-          withCredentials: true,
-        },
-      )
-      .pipe(
-        timeout(12_000),
-      );
+  getSent(
+    forceRefresh = false,
+  ): Observable<MailInboxResponse> {
+    return this.getFolder(
+      'sent',
+      '/api/mail/sent',
+      forceRefresh,
+    );
   }
 
 
-  getDrafts(): Observable<MailInboxResponse> {
-    return this.http
-      .get<MailInboxResponse>(
-        `${environment.apiBaseUrl}/api/mail/drafts`,
-        {
-          withCredentials: true,
-        },
-      )
-      .pipe(
-        timeout(12_000),
-      );
+  getDrafts(
+    forceRefresh = false,
+  ): Observable<MailInboxResponse> {
+    return this.getFolder(
+      'drafts',
+      '/api/mail/drafts',
+      forceRefresh,
+    );
   }
 
 
-  getStarred(): Observable<MailInboxResponse> {
-    return this.http
-      .get<MailInboxResponse>(
-        `${environment.apiBaseUrl}/api/mail/starred`,
-        {
-          withCredentials: true,
-        },
-      )
-      .pipe(
-        timeout(12_000),
-      );
+  getStarred(
+    forceRefresh = false,
+  ): Observable<MailInboxResponse> {
+    return this.getFolder(
+      'starred',
+      '/api/mail/starred',
+      forceRefresh,
+    );
   }
 
 
-  getArchive(): Observable<MailInboxResponse> {
-    return this.http
-      .get<MailInboxResponse>(
-        `${environment.apiBaseUrl}/api/mail/archive`,
-        {
-          withCredentials: true,
-        },
-      )
-      .pipe(
-        timeout(12_000),
-      );
+  getArchive(
+    forceRefresh = false,
+  ): Observable<MailInboxResponse> {
+    return this.getFolder(
+      'archive',
+      '/api/mail/archive',
+      forceRefresh,
+    );
   }
 
 
-  getTrash(): Observable<MailInboxResponse> {
+  getTrash(
+    forceRefresh = false,
+  ): Observable<MailInboxResponse> {
+    return this.getFolder(
+      'trash',
+      '/api/mail/trash',
+      forceRefresh,
+    );
+  }
+
+
+  invalidate(
+    folder?: MailCachedFolder,
+  ): void {
+
+    if (folder) {
+      this.cache.delete(
+        folder,
+      );
+
+      return;
+    }
+
+
+    this.cache.clear();
+  }
+
+
+  private getFolder(
+    folder: MailCachedFolder,
+    endpoint: string,
+    forceRefresh: boolean,
+  ): Observable<MailInboxResponse> {
+
+    if (!forceRefresh) {
+
+      const cached =
+        this.cache.get(
+          folder,
+        );
+
+
+      if (
+        cached
+        &&
+        Date.now() - cached.storedAt
+        < MailInboxService.CACHE_TTL
+      ) {
+        return of(
+          cached.response,
+        );
+      }
+
+    }
+
+
     return this.http
       .get<MailInboxResponse>(
-        `${environment.apiBaseUrl}/api/mail/trash`,
+        `${environment.apiBaseUrl}${endpoint}`,
         {
           withCredentials: true,
         },
       )
       .pipe(
         timeout(12_000),
+
+        tap(
+          response => {
+
+            this.cache.set(
+              folder,
+              {
+                response,
+                storedAt:
+                  Date.now(),
+              },
+            );
+
+          },
+        ),
       );
   }
 

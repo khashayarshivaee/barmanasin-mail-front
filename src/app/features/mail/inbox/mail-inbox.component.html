@@ -5,6 +5,7 @@
     (back)="closeMessage()"
     (archive)="archiveMessage($event)"
     (trash)="trashMessage($event)"
+    (reply)="replyToMessage($event)"
   ></app-mail-message-view>
 
 } @else if (isMessageLoading()) {
@@ -64,9 +65,11 @@
     [toolbarLabel]="folderToolbarLabel()"
     [messages]="messages()"
     [selectedMessageId]="selectedMessageId()"
+    [isRefreshing]="isRefreshing()"
+    (beforeOpen)="saveListScroll($event)"
     (messageSelect)="openMessage($event)"
     (starChange)="toggleMessageStar($event)"
-    (refresh)="loadCurrentFolder()"
+    (refresh)="refreshCurrentFolder()"
   ></app-mail-message-list>
 
 }

@@ -7,6 +7,12 @@ import {
   output
 } from '@angular/core';
 
+
+
+import {
+  MailComposeDraft,
+} from '../compose/mail-compose.component';
+
 import {
   takeUntilDestroyed,
 } from '@angular/core/rxjs-interop';
@@ -62,14 +68,16 @@ export class MailInboxComponent {
   private readonly destroyRef =
     inject(DestroyRef);
 
+  readonly replyDraftData =
+    signal<MailComposeDraft | null>(null);
 
 
+  private listScrollTop = 0;
   private folderRequest?: Subscription;
   private messageRequest?: Subscription;
   private seenRequest?: Subscription;
   private archiveRequest?: Subscription;
   private trashRequest?: Subscription;
-
   private readonly starRequests =
     new Map<string, Subscription>();
 
@@ -85,34 +93,88 @@ export class MailInboxComponent {
   readonly selectedMessage =
     signal<MailMessageDetail | null>(null);
 
+
+
   readonly isMessageLoading =
     signal(false);
 
   readonly messageError =
     signal('');
 
+  readonly isRefreshing =
+    signal(false);
+
   readonly draftEditRequested =
     output<MailMessageDetail>();
 
+  readonly replyRequested =
+    output<MailComposeDraft>();
+
+  private previousFolder: MailFolder | null = null;
+
+
   constructor() {
+
     effect(() => {
+
       const folder =
         this.activeFolder();
 
-      this.closeMessage();
-      this.loadFolder(folder);
+
+      if (
+        this.previousFolder !== folder
+      ) {
+
+        this.previousFolder = folder;
+
+
+        this.closeMessage();
+
+
+        this.messages.set([]);
+
+
+        this.loadFolder(
+          folder,
+          false,
+        );
+
+      }
+
     });
+
   }
 
   loadCurrentFolder(): void {
     this.loadFolder(
       this.activeFolder(),
+      false,
+    );
+  }
+
+
+  refreshCurrentFolder(): void {
+
+    if (this.isRefreshing()) {
+      return;
+    }
+
+
+    this.loadFolder(
+      this.activeFolder(),
+      true,
     );
   }
 
   openMessage(
     message: MailMessageSummary,
   ): void {
+
+    console.log(
+      'OPEN MESSAGE',
+      message,
+    );
+
     this.messageRequest?.unsubscribe();
     this.seenRequest?.unsubscribe();
 
@@ -187,6 +249,62 @@ export class MailInboxComponent {
             );
           },
         });
+  }
+
+  replyToMessage(
+    message: MailMessageDetail,
+  ): void {
+
+    const subject =
+      message.subject.startsWith('Re:')
+        ? message.subject
+        : `Re: ${message.subject}`;
+
+
+    const body = `
+
+
+On ${message.date}, ${
+      message.from.name ||
+      message.from.address
+    } wrote:
+
+> ${
+      message.body.text
+        .split('\n')
+        .join('\n> ')
+    }
+`;
+
+
+    this.replyRequested.emit({
+
+      to:
+      message.from.address,
+
+      cc:
+        '',
+
+      bcc:
+        '',
+
+      subject,
+
+      body,
+
+      attachments: [],
+
+      draftUid:
+        null,
+
+      existingAttachments:
+        [],
+
+    });
+
+
+    this.closeMessage();
+
   }
 
   toggleMessageStar(
@@ -275,21 +393,45 @@ export class MailInboxComponent {
   }
 
   closeMessage(): void {
+
     this.messageRequest?.unsubscribe();
     this.seenRequest?.unsubscribe();
     this.archiveRequest?.unsubscribe();
     this.trashRequest?.unsubscribe();
+
 
     this.messageRequest = undefined;
     this.seenRequest = undefined;
     this.archiveRequest = undefined;
     this.trashRequest = undefined;
 
+
     this.selectedMessageId.set(null);
     this.selectedMessage.set(null);
 
+
     this.messageError.set('');
     this.isMessageLoading.set(false);
+
+
+    requestAnimationFrame(() => {
+
+      const element =
+        document.querySelector(
+          '.message-list__body',
+        ) as HTMLElement | null;
+
+
+      if (!element) {
+        return;
+      }
+
+
+      element.scrollTop =
+        this.listScrollTop;
+
+    });
+
   }
 
   retryMessage(): void {
@@ -382,8 +524,14 @@ export class MailInboxComponent {
 
   private loadFolder(
     folder: MailFolder,
+    forceRefresh = false,
   ): void {
     this.folderRequest?.unsubscribe();
+    if (forceRefresh) {
+      this.isRefreshing.set(
+        true,
+      );
+    }
 
     if (
       folder !== 'inbox' &&
@@ -399,16 +547,28 @@ export class MailInboxComponent {
 
     const source =
       folder === 'starred'
-        ? this.inboxService.getStarred()
+        ? this.inboxService.getStarred(
+          forceRefresh,
+        )
         : folder === 'sent'
-          ? this.inboxService.getSent()
+          ? this.inboxService.getSent(
+            forceRefresh,
+          )
           : folder === 'drafts'
-            ? this.inboxService.getDrafts()
+            ? this.inboxService.getDrafts(
+              forceRefresh,
+            )
             : folder === 'archive'
-              ? this.inboxService.getArchive()
+              ? this.inboxService.getArchive(
+                forceRefresh,
+              )
               : folder === 'trash'
-                ? this.inboxService.getTrash()
-                : this.inboxService.getInbox();
+                ? this.inboxService.getTrash(
+                  forceRefresh,
+                )
+                : this.inboxService.getInbox(
+                  forceRefresh,
+                );
 
     this.folderRequest =
       source
@@ -427,6 +587,9 @@ export class MailInboxComponent {
                   ),
               ),
             );
+            this.isRefreshing.set(
+              false,
+            );
           },
 
           error: (error) => {
@@ -436,6 +599,9 @@ export class MailInboxComponent {
             );
 
             this.messages.set([]);
+            this.isRefreshing.set(
+              false,
+            );
           },
         });
   }
@@ -721,4 +887,18 @@ export class MailInboxComponent {
           },
         });
   }
+
+
+
+  saveListScroll(
+    value: number,
+  ): void {
+
+    this.listScrollTop =
+      value;
+
+  }
+
+
+
 }

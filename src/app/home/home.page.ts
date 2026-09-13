@@ -78,21 +78,33 @@ export class HomePage {
       null,
     );
 
+  readonly replyDraft =
+    signal<MailComposeDraft | null>(
+      null,
+    );
 
   openCompose(): void {
+
     this.editDraft.set(null);
+
+    this.replyDraft.set(null);
 
     this.sendStatus.set('');
 
     this.isComposeOpen.set(true);
+
   }
 
   closeCompose(): void {
+
     this.isComposeOpen.set(false);
 
     this.editDraft.set(null);
 
+    this.replyDraft.set(null);
+
     this.sendStatus.set('');
+
   }
 
   openDraft(
@@ -295,6 +307,22 @@ export class HomePage {
     );
 
     this.closeCompose();
+
+  }
+
+  openReply(
+    draft: MailComposeDraft,
+  ): void {
+
+    this.editDraft.set(null);
+
+    this.replyDraft.set(
+      draft,
+    );
+
+    this.sendStatus.set('');
+
+    this.isComposeOpen.set(true);
 
   }
 

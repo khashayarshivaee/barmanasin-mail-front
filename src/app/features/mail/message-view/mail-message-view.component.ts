@@ -87,6 +87,9 @@ export class MailMessageViewComponent
   readonly trash =
     output<MailMessageDetail>();
 
+  readonly reply =
+    output<MailMessageDetail>();
+
 
   constructor() {
     addIcons({
@@ -615,5 +618,13 @@ export class MailMessageViewComponent
     this.attachmentUrls.set({});
 
     this.attachmentStates.set({});
+  }
+
+  onReply(): void {
+
+    this.reply.emit(
+      this.message(),
+    );
+
   }
 }

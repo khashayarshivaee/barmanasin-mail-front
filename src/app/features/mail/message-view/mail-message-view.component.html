@@ -20,6 +20,18 @@
 
     <div class="message-view__toolbar-actions">
 
+      <button
+        type="button"
+        class="message-view__action"
+        aria-label="Reply message"
+        title="Reply"
+        (click)="onReply()"
+      >
+  <span>
+    Reply
+  </span>
+      </button>
+
       @if (canArchive()) {
         <button
           type="button"

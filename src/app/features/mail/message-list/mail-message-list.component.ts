@@ -1,9 +1,11 @@
 import {
+  AfterViewInit,
   Component,
+  ElementRef,
+  ViewChild,
   input,
   output,
 } from '@angular/core';
-
 import { IonIcon } from '@ionic/angular';
 
 import { addIcons } from 'ionicons';
@@ -11,6 +13,7 @@ import { addIcons } from 'ionicons';
 import {
   star,
   starOutline,
+  refreshOutline,
 } from 'ionicons/icons';
 
 export interface MailMessageSummary {
@@ -40,7 +43,7 @@ export interface MailMessageSummary {
     IonIcon,
   ],
 })
-export class MailMessageListComponent {
+export class MailMessageListComponent implements AfterViewInit {
   readonly title =
     input('Inbox');
 
@@ -56,8 +59,23 @@ export class MailMessageListComponent {
   readonly selectedMessageId =
     input<string | null>(null);
 
+  readonly isRefreshing =
+    input(false);
+
+  @ViewChild(
+    'messageListBody'
+  )
+  private messageListBody?: ElementRef<HTMLElement>;
+  private savedScrollTop = 0;
+
+
+
   readonly messageSelect =
     output<MailMessageSummary>();
+
+
+  readonly beforeOpen =
+    output<number>();
 
   readonly refresh =
     output<void>();
@@ -69,18 +87,69 @@ export class MailMessageListComponent {
     addIcons({
       star,
       starOutline,
+      refreshOutline,
     });
   }
+  ngAfterViewInit(): void {
+
+    requestAnimationFrame(() => {
+
+      if (
+        this.messageListBody
+      ) {
+
+        this.messageListBody
+          .nativeElement
+          .scrollTop =
+          this.savedScrollTop;
+
+      }
+
+    });
+
+  }
+
+
+  saveScrollPosition(): void {
+
+    if (
+      this.messageListBody
+    ) {
+
+      this.savedScrollTop =
+        this.messageListBody
+          .nativeElement
+          .scrollTop;
+
+    }
+
+  }
+
+
+
 
   selectMessage(
     message: MailMessageSummary,
   ): void {
+
+    this.beforeOpen.emit(
+      this.messageListBody
+        ?.nativeElement
+        .scrollTop ?? 0,
+    );
+
+
     this.messageSelect.emit(
       message,
     );
-  }
 
+  }
   refreshMailbox(): void {
+
+    if (this.isRefreshing()) {
+      return;
+    }
+
     this.refresh.emit();
   }
 

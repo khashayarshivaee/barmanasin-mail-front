@@ -170,6 +170,10 @@ export class MailComposeComponent implements OnDestroy {
       null,
     );
 
+  readonly replyDraft =
+    input<MailComposeDraft | null>(
+      null,
+    );
 
 
   readonly showCopyFields =
@@ -297,6 +301,38 @@ export class MailComposeComponent implements OnDestroy {
           draft.bcc.trim()
         ),
       );
+
+    });
+
+    effect(() => {
+
+      const reply =
+        this.replyDraft();
+
+
+      if (!reply) {
+        return;
+      }
+
+
+      this.form.patchValue({
+
+        to:
+        reply.to,
+
+        cc:
+        reply.cc,
+
+        bcc:
+        reply.bcc,
+
+        subject:
+        reply.subject,
+
+        body:
+        reply.body,
+
+      });
 
     });
 

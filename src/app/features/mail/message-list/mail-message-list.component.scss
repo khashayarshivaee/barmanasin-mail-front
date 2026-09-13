@@ -132,6 +132,29 @@ button {
 .refresh-button ion-icon {
   font-size: 16px;
 }
+.refresh-button--loading ion-icon {
+  animation:
+    refresh-spin 0.8s linear infinite;
+}
+
+
+.refresh-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+
+@keyframes refresh-spin {
+
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
 
 
 /* -------------------------------------------------------
@@ -309,7 +332,7 @@ button {
     );
 
   box-shadow:
-    inset 3px 0 0 #52685a;
+    inset 3px 0 0 #00fa5d;
 }
 
 .message--unread:hover {
