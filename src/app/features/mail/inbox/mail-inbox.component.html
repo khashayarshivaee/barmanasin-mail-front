@@ -2,10 +2,12 @@
 
   <app-mail-message-view
     [message]="selectedMessage()!"
+    [isPreparingReplyAll]="isPreparingReplyAll()"
     (back)="closeMessage()"
     (archive)="archiveMessage($event)"
     (trash)="trashMessage($event)"
     (reply)="replyToMessage($event)"
+    (replyAll)="replyAllToMessage($event)"
   ></app-mail-message-view>
 
 } @else if (isMessageLoading()) {
@@ -64,6 +66,7 @@
     [eyebrow]="folderEyebrow()"
     [toolbarLabel]="folderToolbarLabel()"
     [messages]="messages()"
+    [searchQuery]="searchQuery()"
     [selectedMessageId]="selectedMessageId()"
     [isRefreshing]="isRefreshing()"
     (beforeOpen)="saveListScroll($event)"

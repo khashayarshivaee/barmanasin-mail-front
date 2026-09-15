@@ -10,7 +10,14 @@ import {
   IonicRouteStrategy,
   provideIonicAngular,
 } from '@ionic/angular';
-import { provideHttpClient } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptors,
+} from '@angular/common/http';
+
+import {
+  mailAuthInterceptor,
+} from './app/features/mail-auth.interceptor';
 
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
@@ -24,7 +31,11 @@ bootstrapApplication(AppComponent, {
 
     provideIonicAngular(),
 
-    provideHttpClient(),
+    provideHttpClient(
+      withInterceptors([
+        mailAuthInterceptor,
+      ]),
+    ),
 
     provideRouter(
       routes,

@@ -7,9 +7,8 @@
       href="/home"
       aria-label="Barmanasin Mail"
     >
-      <span class="brand__mark">
-        B
-      </span>
+
+      <img class="brand__mark" src="/assets/logo/ChatGPT Image Aug 19, 2026, 01_05_40 PM.png" alt="">
 
       <span class="brand__identity">
         <strong>BARMANASIN</strong>
@@ -45,135 +44,68 @@
     aria-label="Mailbox folders"
   >
 
-    <span class="navigation-label">
-      MAILBOX
-    </span>
+  <span class="navigation-label">
+    MAILBOX
+  </span>
 
 
-    <button
-      type="button"
-      class="navigation-item"
-      [class.navigation-item--active]="activeFolder() === 'inbox'"
-      (click)="selectFolder('inbox')"
-    >
+    @for (
+      folder of folders;
+      track folder.id
+      ) {
+
+
+      <button
+        type="button"
+        class="navigation-item"
+        [class.navigation-item--active]="activeFolder() === folder.id"
+        (click)="selectFolder(folder.id)"
+      >
+
+
       <span class="navigation-item__main">
 
         <ion-icon
-          name="mail-outline"
+          [name]="folder.icon"
           aria-hidden="true"
         ></ion-icon>
 
+
         <span>
-          Inbox
+          {{ folder.label }}
         </span>
 
       </span>
-    </button>
 
 
-    <button
-      type="button"
-      class="navigation-item"
-      [class.navigation-item--active]="activeFolder() === 'starred'"
-      (click)="selectFolder('starred')"
-    >
-      <span class="navigation-item__main">
 
-        <ion-icon
-          name="star-outline"
-          aria-hidden="true"
-        ></ion-icon>
+        @if (badge(folder.id).total) {
 
-        <span>
-          Starred
-        </span>
+          <span class="navigation-item__badges">
 
-      </span>
-    </button>
+    <small>
+      {{ badge(folder.id).total }}
+    </small>
 
 
-    <button
-      type="button"
-      class="navigation-item"
-      [class.navigation-item--active]="activeFolder() === 'sent'"
-      (click)="selectFolder('sent')"
-    >
-      <span class="navigation-item__main">
+            @if (badge(folder.id).unread > 0) {
 
-        <ion-icon
-          name="paper-plane-outline"
-          aria-hidden="true"
-        ></ion-icon>
+              <b>
+        {{ badge(folder.id).unread }}
+      </b>
 
-        <span>
-          Sent
-        </span>
+            }
 
-      </span>
-    </button>
+  </span>
+
+        }
 
 
-    <button
-      type="button"
-      class="navigation-item"
-      [class.navigation-item--active]="activeFolder() === 'drafts'"
-      (click)="selectFolder('drafts')"
-    >
-      <span class="navigation-item__main">
-
-        <ion-icon
-          name="file-tray-full-outline"
-          aria-hidden="true"
-        ></ion-icon>
-
-        <span>
-          Drafts
-        </span>
-
-      </span>
-    </button>
+      </button>
 
 
-    <button
-      type="button"
-      class="navigation-item"
-      [class.navigation-item--active]="activeFolder() === 'archive'"
-      (click)="selectFolder('archive')"
-    >
-      <span class="navigation-item__main">
+    }
 
-        <ion-icon
-          name="archive-outline"
-          aria-hidden="true"
-        ></ion-icon>
-
-        <span>
-          Archive
-        </span>
-
-      </span>
-    </button>
-
-
-    <button
-      type="button"
-      class="navigation-item"
-      [class.navigation-item--active]="activeFolder() === 'trash'"
-      (click)="selectFolder('trash')"
-    >
-      <span class="navigation-item__main">
-
-        <ion-icon
-          name="trash-outline"
-          aria-hidden="true"
-        ></ion-icon>
-
-        <span>
-          Trash
-        </span>
-
-      </span>
-    </button>
 
   </nav>
 

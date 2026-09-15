@@ -321,3 +321,241 @@ input {
     height: 34px;
   }
 }
+
+.mail-topbar__account {
+  position: relative;
+}
+
+.account-button:focus-visible,
+.account-panel__item:focus-visible {
+  outline: 2px solid #626b5e;
+  outline-offset: 3px;
+}
+
+.account-button:disabled {
+  cursor: wait;
+}
+
+.account-chevron {
+  transition: transform 160ms ease;
+}
+
+.account-button[aria-expanded='true'] .account-chevron {
+  transform: rotate(180deg);
+}
+
+.account-panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 100;
+
+  width: 280px;
+  max-width: calc(100vw - 28px);
+
+  border: 1px solid rgba(17, 20, 18, 0.12);
+  background: #f8f7f2;
+
+  box-shadow:
+    0 16px 40px rgba(17, 20, 18, 0.12);
+}
+
+.account-panel__header {
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  border-bottom: 1px solid rgba(17, 20, 18, 0.08);
+}
+
+.account-panel__eyebrow {
+  margin-bottom: 5px;
+
+  color: #8a8b86;
+
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.account-panel__header strong {
+  color: #20231f;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  overflow-wrap: anywhere;
+}
+
+.account-panel__header small {
+  color: #80827b;
+  font-size: 11px;
+
+  overflow-wrap: anywhere;
+}
+
+.account-panel__actions {
+  padding: 8px;
+}
+
+.account-panel__item {
+  width: 100%;
+  padding: 13px 12px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  border: 0;
+  background: transparent;
+
+  text-align: left;
+  font-size: 12px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition: background 160ms ease;
+}
+
+.account-panel__item ion-icon {
+  flex: 0 0 auto;
+  font-size: 18px;
+}
+
+.account-panel__item--logout {
+  color: #92483f;
+}
+
+.account-panel__item:hover:not(:disabled) {
+  background: rgba(146, 72, 63, 0.06);
+}
+
+.account-panel__item:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.account-panel__error {
+  margin: 0;
+  padding: 0 20px 16px;
+
+  color: #92483f;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.account-avatar {
+  overflow: hidden;
+}
+
+.account-avatar img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.account-panel__item--settings {
+  color: #343b30;
+  text-decoration: none;
+}
+
+.account-panel__item--settings:hover {
+  background: rgba(17, 20, 18, 0.04);
+}
+.mail-topbar__search {
+
+  width: min(520px, 45vw);
+
+  height: 48px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:12px;
+
+
+  padding:0 16px;
+
+
+  background:#fff;
+
+
+  border:1px solid #e5e5e5;
+
+
+  border-radius:14px;
+
+
+  cursor:pointer;
+
+
+  color:#999;
+
+
+  transition:.2s ease;
+
+}
+
+
+
+.mail-topbar__search:hover {
+
+  border-color:#d0d0d0;
+
+}
+
+
+
+.mail-topbar__search ion-icon {
+
+  font-size:20px;
+
+  color:#777;
+
+}
+
+
+
+.mail-topbar__search span {
+
+  flex:1;
+
+  text-align:left;
+
+  font-size:15px;
+
+}
+
+
+
+.mail-topbar__search kbd {
+
+  width:26px;
+
+  height:26px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+
+  border-radius:6px;
+
+  border:1px solid #ddd;
+
+  background:#fafafa;
+
+  color:#777;
+
+  font-size:13px;
+
+}

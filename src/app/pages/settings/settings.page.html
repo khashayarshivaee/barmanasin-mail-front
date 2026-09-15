@@ -1,0 +1,248 @@
+<ion-content
+  [fullscreen]="true"
+  class="settings-page"
+>
+  <main class="settings">
+
+    <header class="settings__topbar">
+
+      @if (isBusy()) {
+        <span class="settings__back settings__back--disabled">
+          ← Back to mailbox
+        </span>
+      } @else {
+        <a
+          class="settings__back"
+          routerLink="/home"
+        >
+          ← Back to mailbox
+        </a>
+      }
+
+      <span class="settings__brand">
+        BARMANASIN MAIL
+      </span>
+
+    </header>
+
+    <section class="settings__heading">
+
+      <p class="eyebrow">
+        YOUR ACCOUNT
+      </p>
+
+      <h1>
+        Settings
+      </h1>
+
+      <p class="settings__description">
+        Manage your profile and how you appear in your mailbox.
+      </p>
+
+    </section>
+
+    @if (errorMessage()) {
+      <p
+        class="notice notice--error"
+        role="alert"
+      >
+        {{ errorMessage() }}
+      </p>
+    }
+
+    @if (successMessage()) {
+      <p
+        class="notice notice--success"
+        role="status"
+      >
+        {{ successMessage() }}
+      </p>
+    }
+
+    @if (isLoading()) {
+
+      <div
+        class="settings__state"
+        role="status"
+      >
+        Loading your account...
+      </div>
+
+    } @else if (user(); as account) {
+
+      <section
+        class="settings-card"
+        [attr.aria-busy]="isBusy()"
+      >
+
+        <div class="settings-card__intro">
+
+          <p class="eyebrow">
+            01 / PROFILE
+          </p>
+
+          <h2>
+            Profile photo
+          </h2>
+
+          <p>
+            Choose a photo for your account avatar.
+          </p>
+
+        </div>
+
+        <div class="photo-editor">
+
+          <div class="profile-avatar">
+
+            @if (displayedAvatar() && !imageFailed()) {
+              <img
+                [src]="displayedAvatar()"
+                alt="Profile photo"
+                (error)="onImageError()"
+              />
+            } @else {
+              <span>
+                {{ initials() }}
+              </span>
+            }
+
+          </div>
+
+          <div class="photo-editor__controls">
+
+            <input
+              #photoInput
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              hidden
+              [disabled]="isBusy()"
+              (change)="selectPhoto($event)"
+            />
+
+            <div class="photo-editor__actions">
+
+              <button
+                type="button"
+                class="button button--secondary"
+                [disabled]="isBusy()"
+                (click)="photoInput.click()"
+              >
+                Choose photo
+              </button>
+
+              @if (account.avatar_url && !selectedFile()) {
+                <button
+                  type="button"
+                  class="button button--remove"
+                  [disabled]="isBusy()"
+                  (click)="removePhoto()"
+                >
+                  {{ isRemoving() ? 'Removing...' : 'Remove photo' }}
+                </button>
+              }
+
+            </div>
+
+            <p class="photo-editor__hint">
+              JPG, PNG or WebP. Maximum 2 MB and 4096 × 4096 pixels.
+            </p>
+
+            @if (selectedFile(); as file) {
+
+              <p class="photo-editor__filename">
+                {{ file.name }}
+              </p>
+
+              <p class="photo-editor__hint">
+                Preview only — save to update your profile.
+              </p>
+
+              <div class="photo-editor__actions">
+
+                <button
+                  type="button"
+                  class="button button--primary"
+                  [disabled]="isBusy() || imageFailed()"
+                  (click)="savePhoto()"
+                >
+                  {{ isSaving() ? 'Saving...' : 'Save photo' }}
+                </button>
+
+                <button
+                  type="button"
+                  class="button button--secondary"
+                  [disabled]="isBusy()"
+                  (click)="discardPhoto()"
+                >
+                  Cancel
+                </button>
+
+              </div>
+
+            }
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <section class="settings-card">
+
+        <div class="settings-card__intro">
+
+          <p class="eyebrow">
+            02 / DETAILS
+          </p>
+
+          <h2>
+            Account details
+          </h2>
+
+          <p>
+            Your current mailbox information.
+          </p>
+
+        </div>
+
+        <dl class="account-details">
+
+          <div>
+            <dt>Name</dt>
+            <dd>{{ account.name }}</dd>
+          </div>
+
+          <div>
+            <dt>Mailbox</dt>
+            <dd>{{ account.mailbox_address }}</dd>
+          </div>
+
+          <div>
+            <dt>Sign-in email</dt>
+            <dd>{{ account.email }}</dd>
+          </div>
+
+          <div>
+            <dt>Mailbox quota</dt>
+            <dd>{{ account.mailbox_quota_mb }} MB</dd>
+          </div>
+
+        </dl>
+
+      </section>
+
+    } @else {
+
+      <button
+        type="button"
+        class="button button--secondary"
+        (click)="loadAccount()"
+      >
+        Try again
+      </button>
+
+    }
+
+  </main>
+</ion-content>

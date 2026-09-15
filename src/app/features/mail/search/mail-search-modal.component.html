@@ -1,0 +1,149 @@
+<div class="search-modal">
+
+  <header class="search-modal__header">
+
+    <div class="search-modal__title">
+
+      <ion-icon
+        name="search-outline"
+        aria-hidden="true"
+      ></ion-icon>
+
+      <strong>
+        Search Mail
+      </strong>
+
+    </div>
+
+
+    <button
+      type="button"
+      class="search-modal__close"
+      (click)="close()"
+      aria-label="Close search"
+    >
+
+      <ion-icon
+        name="close-outline"
+        aria-hidden="true"
+      ></ion-icon>
+
+    </button>
+
+  </header>
+
+
+  <div class="search-modal__input">
+
+    <ion-icon
+      name="search-outline"
+      aria-hidden="true"
+    ></ion-icon>
+
+
+    <input
+      type="search"
+      autocomplete="off"
+      autofocus
+      placeholder="Search messages..."
+      [value]="query()"
+      (input)="updateQuery($any($event.target).value)"
+    />
+
+  </div>
+
+
+  @if (loading()) {
+
+    <div class="search-modal__loading">
+      Searching...
+    </div>
+
+  }
+
+
+  @if (
+    !loading()
+    && messages().length === 0
+    && query()
+    ) {
+
+    <div class="search-modal__empty">
+      No messages found.
+    </div>
+
+  }
+
+
+  <div class="search-modal__results">
+
+
+    @for (
+      group of groupedMessages();
+      track group.folder
+      ) {
+
+
+      <section class="search-group">
+
+
+        <div class="search-group__header">
+
+          <span class="search-group__line"></span>
+
+          <span class="search-group__title">
+            {{ group.folder }}
+          </span>
+
+          <span class="search-group__line"></span>
+
+        </div>
+
+
+
+        @for (
+          message of group.messages;
+          track message.mailbox + message.uid
+          ) {
+
+
+          <button
+            type="button"
+            class="search-result"
+            (click)="openMessage(message)"
+          >
+
+            <div class="search-result__main">
+
+              <strong>
+                {{ message.subject || '(No subject)' }}
+              </strong>
+
+
+              <span>
+                {{ message.from.name || message.from.address }}
+              </span>
+
+
+              <small>
+                {{ message.date }}
+              </small>
+
+            </div>
+
+          </button>
+
+
+        }
+
+
+      </section>
+
+
+    }
+
+
+  </div>
+
+
+</div>

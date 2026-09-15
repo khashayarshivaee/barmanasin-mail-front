@@ -21,28 +21,30 @@
   </div>
 
 
-  <div class="mail-topbar__search">
+
+  <button
+    type="button"
+    class="mail-topbar__search"
+    (click)="openSearch()"
+    aria-label="Search mail"
+  >
 
     <ion-icon
       name="search-outline"
       aria-hidden="true"
     ></ion-icon>
 
-    <input
-      type="search"
-      autocomplete="off"
-      placeholder="Search mail"
-      [value]="searchQuery()"
-      (input)="updateSearch($any($event.target).value)"
-      aria-label="Search mail"
-    />
 
-    <span class="search-shortcut">
+    <span>
+    Search mail
+  </span>
+
+
+    <kbd>
       /
-    </span>
+    </kbd>
 
-  </div>
-
+  </button>
 
   <div class="mail-topbar__account">
 
@@ -50,38 +52,37 @@
       type="button"
       class="account-button"
       (click)="openAccount()"
-      aria-label="Open account menu"
+      aria-label="Open account options"
+      aria-controls="mail-account-panel"
+      [attr.aria-expanded]="isAccountOpen()"
+      [disabled]="isLoggingOut()"
     >
 
-      <span class="account-avatar">
-        {{ initials() }}
-      </span>
+  <span class="account-avatar">
 
+  @if (avatarUrl() && !avatarFailed()) {
+    <img
+      [src]="avatarUrl()"
+      alt=""
+      (error)="avatarFailed.set(true)"
+    />
+  } @else {
+    {{ initials() }}
+  }
+
+</span>
 
       <span class="account-copy">
 
-        @if (userName()) {
-          <strong>
-            {{ userName() }}
-          </strong>
-        } @else {
-          <strong>
-            Barmanasin
-          </strong>
-        }
+      <strong>
+        {{ userName() || 'Mail account' }}
+      </strong>
 
-        @if (mailboxAddress()) {
-          <small>
-            {{ mailboxAddress() }}
-          </small>
-        } @else {
-          <small>
-            Mail account
-          </small>
-        }
+      <small>
+        {{ mailboxAddress() || 'Loading account...' }}
+      </small>
 
-      </span>
-
+    </span>
 
       <ion-icon
         class="account-chevron"
@@ -90,6 +91,80 @@
       ></ion-icon>
 
     </button>
+
+
+    @if (isAccountOpen()) {
+
+      <div
+        id="mail-account-panel"
+        class="account-panel"
+        [attr.aria-busy]="isLoggingOut()"
+      >
+
+        <div class="account-panel__header">
+
+        <span class="account-panel__eyebrow">
+          ACCOUNT
+        </span>
+
+          <strong>
+            {{ userName() || 'Mail account' }}
+          </strong>
+
+          <small>
+            {{ mailboxAddress() }}
+          </small>
+
+        </div>
+
+        <div class="account-panel__actions">
+
+          @if (!isLoggingOut()) {
+            <a
+              class="account-panel__item account-panel__item--settings"
+              routerLink="/settings"
+              (click)="isAccountOpen.set(false)"
+            >
+    <span>
+      Settings
+    </span>
+            </a>
+          }
+
+          <button
+            type="button"
+            class="account-panel__item account-panel__item--logout"
+            [disabled]="isLoggingOut()"
+            (click)="logout()"
+          >
+
+            <ion-icon
+              name="log-out-outline"
+              aria-hidden="true"
+            ></ion-icon>
+
+            <span>
+            {{ isLoggingOut() ? 'Logging out...' : 'Log out' }}
+          </span>
+
+          </button>
+
+        </div>
+
+        @if (logoutError()) {
+
+          <p
+            class="account-panel__error"
+            role="alert"
+          >
+            {{ logoutError() }}
+          </p>
+
+        }
+
+      </div>
+
+    }
 
   </div>
 

@@ -1,13 +1,18 @@
-import { Routes } from '@angular/router';
+import {
+  Routes,
+} from '@angular/router';
 
-import { mailAuthGuard } from './core/auth/mail-auth.guard';
+import {
+  mailAuthGuard,
+} from './core/auth/mail-auth.guard';
+
 
 export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
       import('./pages/login/login.page')
-        .then((m) => m.LoginPage),
+        .then(m => m.LoginPage),
   },
 
   {
@@ -15,7 +20,15 @@ export const routes: Routes = [
     canActivate: [mailAuthGuard],
     loadComponent: () =>
       import('./home/home.page')
-        .then((m) => m.HomePage),
+        .then(m => m.HomePage),
+  },
+
+  {
+    path: 'settings',
+    canActivate: [mailAuthGuard],
+    loadComponent: () =>
+      import('./pages/settings/settings.page')
+        .then(m => m.SettingsPage),
   },
 
   {

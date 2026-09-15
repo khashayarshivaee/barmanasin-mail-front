@@ -62,6 +62,9 @@ export interface MailInboxResponse {
   meta: {
     total: number;
     unread?: number;
+    search?: string;
+    page?: number;
+    per_page?: number;
   };
 }
 
@@ -144,6 +147,31 @@ export class MailInboxService {
       '/api/mail/archive',
       forceRefresh,
     );
+  }
+
+  search(
+    query: string,
+    type = 'TEXT',
+    page = 1,
+    perPage = 100,
+  ): Observable<MailInboxResponse> {
+    return this.http
+      .get<MailInboxResponse>(
+        `${environment.apiBaseUrl}/api/mail/search`,
+        {
+          params: {
+            q: query,
+            type,
+            page,
+            per_page: perPage,
+          },
+
+          withCredentials: true,
+        },
+      )
+      .pipe(
+        timeout(12_000),
+      );
   }
 
 

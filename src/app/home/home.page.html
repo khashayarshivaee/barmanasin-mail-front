@@ -10,11 +10,13 @@
       (folderChange)="onFolderChange()"
     ></app-mail-sidebar>
 
-
     <app-mail-topbar
       mail-topbar
+      [userName]="currentUser()?.name ?? ''"
+      [mailboxAddress]="currentUser()?.mailbox_address ?? ''"
+      [avatarUrl]="currentUser()?.avatar_url ?? null"
+      (searchClick)="openSearch()"
     ></app-mail-topbar>
-
 
     @if (isComposeOpen()) {
 
@@ -33,6 +35,7 @@
 
       <app-mail-inbox
         mail-content
+        [searchQuery]="searchQuery()"
         (draftEditRequested)="openDraft($event)"
         (replyRequested)="openReply($event)"
       ></app-mail-inbox>

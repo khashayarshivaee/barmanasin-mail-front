@@ -47,6 +47,9 @@ export class MailMessageListComponent implements AfterViewInit {
   readonly title =
     input('Inbox');
 
+  readonly searchQuery =
+    input('');
+
   readonly eyebrow =
     input('MAILBOX');
 
@@ -161,6 +164,34 @@ export class MailMessageListComponent implements AfterViewInit {
 
     this.starChange.emit(
       message,
+    );
+  }
+
+  highlight(
+    value: string,
+  ): string {
+
+    const query =
+      this.searchQuery().trim();
+
+    if (!query) {
+      return value;
+    }
+
+
+    const escaped =
+      query.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        '\\$&',
+      );
+
+
+    return value.replace(
+      new RegExp(
+        `(${escaped})`,
+        'gi',
+      ),
+      '<mark>$1</mark>',
     );
   }
 }

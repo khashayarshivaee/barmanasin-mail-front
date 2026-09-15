@@ -2,9 +2,33 @@ import {
   Component,
   signal,
   inject,
+  DestroyRef,
+  OnInit,
+  AfterViewInit,
+
 } from '@angular/core';
 
-import { IonContent } from '@ionic/angular';
+import {
+  ViewChild,
+} from '@angular/core';
+
+import {
+  takeUntilDestroyed,
+} from '@angular/core/rxjs-interop';
+
+import {
+  MailAuthService,
+  MailUser,
+} from '../core/auth/mail-auth.service';
+
+import {
+  IonContent,
+  ModalController,
+} from '@ionic/angular';
+
+import {
+  MailSearchModalComponent,
+} from '../features/mail/search/mail-search-modal.component';
 
 import {
   MailShellComponent,
@@ -40,6 +64,10 @@ import {
   MailFolderStateService,
 } from '../features/mail/services/mail-folder-state.service';
 
+import {
+  MailRealtimeService,
+} from '../features/mail/services/mail-realtime.service';
+
 
 @Component({
   selector: 'app-home',
@@ -55,13 +83,16 @@ import {
     MailComposeComponent,
   ],
 })
-export class HomePage {
+export class HomePage implements OnInit, AfterViewInit {
 
   private readonly mailSendService =
     inject(MailSendService);
 
   private readonly folderState =
     inject(MailFolderStateService);
+
+  private readonly modalController =
+    inject(ModalController);
 
 
   readonly isComposeOpen =
@@ -78,10 +109,89 @@ export class HomePage {
       null,
     );
 
+  readonly searchQuery =
+    signal('');
+
   readonly replyDraft =
     signal<MailComposeDraft | null>(
       null,
     );
+
+  private readonly mailAuthService =
+    inject(MailAuthService);
+
+  private readonly mailRealtime =
+    inject(MailRealtimeService);
+
+  private readonly destroyRef =
+    inject(DestroyRef);
+
+  readonly currentUser =
+    signal<MailUser | null>(null);
+
+  @ViewChild(
+    MailInboxComponent,
+  )
+  private mailInbox?: MailInboxComponent;
+  private inboxReady = false;
+
+  ngOnInit(): void {
+    this.mailAuthService
+      .me()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: ({ user }) => {
+
+          this.currentUser.set(user);
+
+
+          this.mailRealtime.connect(
+            user.id,
+          );
+
+
+
+        },
+
+        error: (error) => {
+          console.error(
+            '[Mail] Unable to load account.',
+            error,
+          );
+
+          if (error.status === 401) {
+            window.location.replace('/');
+          }
+        },
+      });
+  }
+
+  ngAfterViewInit(): void {
+
+    this.inboxReady = true;
+
+
+    this.mailRealtime.messageReceived
+      .pipe(
+        takeUntilDestroyed(
+          this.destroyRef,
+        ),
+      )
+      .subscribe(() => {
+
+        if (!this.inboxReady) {
+          return;
+        }
+
+
+        this.mailInbox
+          ?.loadCurrentFolder();
+
+      });
+
+  }
 
   openCompose(): void {
 
@@ -323,6 +433,46 @@ export class HomePage {
     this.sendStatus.set('');
 
     this.isComposeOpen.set(true);
+
+  }
+
+  onSearch(
+    value: string,
+  ): void {
+    this.searchQuery.set(
+      value,
+    );
+  }
+
+
+  async openSearch(): Promise<void> {
+
+    const modal =
+      await this.modalController.create({
+        component:
+        MailSearchModalComponent,
+
+        cssClass:
+          'mail-search-modal',
+      });
+
+
+    await modal.present();
+
+
+    const result =
+      await modal.onDidDismiss();
+
+
+    if (!result.data) {
+      return;
+    }
+
+
+    this.mailInbox
+      ?.openExternalMessage(
+        result.data,
+      );
 
   }
 

@@ -90,6 +90,12 @@ export class MailMessageViewComponent
   readonly reply =
     output<MailMessageDetail>();
 
+  readonly replyAll =
+    output<MailMessageDetail>();
+
+  readonly isPreparingReplyAll =
+    input(false);
+
 
   constructor() {
     addIcons({
@@ -626,5 +632,15 @@ export class MailMessageViewComponent
       this.message(),
     );
 
+  }
+
+  onReplyAll(): void {
+    if (this.isPreparingReplyAll()) {
+      return;
+    }
+
+    this.replyAll.emit(
+      this.message(),
+    );
   }
 }

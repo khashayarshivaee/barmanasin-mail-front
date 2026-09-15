@@ -1,12 +1,23 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {
+  inject,
+  Injectable,
+} from '@angular/core';
+
+import {
+  HttpClient,
+} from '@angular/common/http';
+
 import {
   Observable,
   switchMap,
   timeout,
+  tap,
 } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import {
+  environment,
+} from '../../../environments/environment';
+
 
 export interface MailUser {
   id: number;
@@ -14,11 +25,13 @@ export interface MailUser {
   email: string;
   mailbox_address: string;
   mailbox_quota_mb: number;
+  avatar_url: string | null;
 }
 
 export interface MailLoginResponse {
   message: string;
   user: MailUser;
+  token: string;
 }
 
 export interface MailMeResponse {
@@ -29,15 +42,28 @@ export interface MailLogoutResponse {
   message: string;
 }
 
+export interface MailAvatarResponse {
+  message: string;
+  avatar_url: string | null;
+}
+
+
 @Injectable({
   providedIn: 'root',
 })
 export class MailAuthService {
-  private readonly http = inject(HttpClient);
+  private readonly http =
+    inject(HttpClient);
 
-  private readonly baseUrl = environment.apiBaseUrl;
+  private readonly baseUrl =
+    environment.apiBaseUrl;
 
-  private readonly requestTimeout = 12000;
+  private readonly requestTimeout =
+    12000;
+
+  private readonly uploadTimeout =
+    60000;
+
 
   login(
     email: string,
@@ -67,15 +93,70 @@ export class MailAuthService {
             )
             .pipe(
               timeout(this.requestTimeout),
+
+              tap(response => {
+
+                localStorage.setItem(
+                  'mail_token',
+                  response.token,
+                );
+
+              }),
             ),
         ),
       );
   }
 
+
   me(): Observable<MailMeResponse> {
     return this.http
       .get<MailMeResponse>(
         `${this.baseUrl}/api/mail/auth/me`,
+        {
+          withCredentials: true,
+
+          headers: {
+            Authorization:
+              `Bearer ${localStorage.getItem('mail_token')}`,
+          },
+        },
+      )
+      .pipe(
+        timeout(this.requestTimeout),
+      );
+  }
+
+
+  uploadAvatar(
+    file: File,
+  ): Observable<MailAvatarResponse> {
+    const formData =
+      new FormData();
+
+    formData.append(
+      'avatar',
+      file,
+      file.name,
+    );
+
+    return this.http
+      .post<MailAvatarResponse>(
+        `${this.baseUrl}/api/mail/auth/avatar`,
+        formData,
+        {
+          withCredentials: true,
+        },
+      )
+      .pipe(
+        timeout(this.uploadTimeout),
+      );
+  }
+
+
+  removeAvatar(): Observable<MailAvatarResponse> {
+    return this.http
+      .delete<MailAvatarResponse>(
+        `${this.baseUrl}/api/mail/auth/avatar`,
         {
           withCredentials: true,
         },
@@ -85,6 +166,7 @@ export class MailAuthService {
       );
   }
 
+
   logout(): Observable<MailLogoutResponse> {
     return this.http
       .post<MailLogoutResponse>(
@@ -92,6 +174,11 @@ export class MailAuthService {
         {},
         {
           withCredentials: true,
+
+          headers: {
+            Authorization:
+              `Bearer ${localStorage.getItem('mail_token')}`,
+          },
         },
       )
       .pipe(

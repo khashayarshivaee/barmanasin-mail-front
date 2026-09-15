@@ -124,9 +124,10 @@
 
               <div class="message__top">
 
-                <strong class="message__sender">
-                  {{ message.senderName }}
-                </strong>
+                <strong
+                  class="message__sender"
+                  [innerHTML]="highlight(message.senderName)"
+                ></strong>
 
                 <div class="message__meta">
 
@@ -145,14 +146,16 @@
               </div>
 
 
-              <div class="message__subject">
-                {{ message.subject }}
-              </div>
+              <div
+                class="message__subject"
+                [innerHTML]="highlight(message.subject)"
+              ></div>
 
 
-              <p class="message__preview">
-                {{ message.preview }}
-              </p>
+              <p
+                class="message__preview"
+                [innerHTML]="highlight(message.preview)"
+              ></p>
 
             </div>
 

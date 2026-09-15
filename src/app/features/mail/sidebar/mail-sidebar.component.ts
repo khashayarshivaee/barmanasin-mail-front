@@ -23,6 +23,10 @@ import {
   MailFolderStateService,
 } from '../services/mail-folder-state.service';
 
+import {
+  MailFolderBadgeService,
+} from '../services/mail-folder-badge.service';
+
 @Component({
   selector: 'app-mail-sidebar',
   standalone: true,
@@ -36,8 +40,59 @@ export class MailSidebarComponent {
   private readonly folderState =
     inject(MailFolderStateService);
 
+  private readonly badgeService =
+    inject(MailFolderBadgeService);
+
+
+  readonly badges =
+    this.badgeService.badges;
+
   readonly activeFolder =
     this.folderState.activeFolder;
+
+
+
+
+  readonly folders = [
+    {
+      id: 'inbox',
+      label: 'Inbox',
+      icon: 'mail-outline',
+    },
+
+    {
+      id: 'starred',
+      label: 'Starred',
+      icon: 'star-outline',
+    },
+
+    {
+      id: 'sent',
+      label: 'Sent',
+      icon: 'paper-plane-outline',
+    },
+
+    {
+      id: 'drafts',
+      label: 'Drafts',
+      icon: 'file-tray-full-outline',
+    },
+
+    {
+      id: 'archive',
+      label: 'Archive',
+      icon: 'archive-outline',
+    },
+
+    {
+      id: 'trash',
+      label: 'Trash',
+      icon: 'trash-outline',
+    },
+
+  ] as const;
+
+
 
   readonly folderChange =
     output<MailFolder>();
@@ -46,6 +101,7 @@ export class MailSidebarComponent {
     output<void>();
 
   constructor() {
+    this.badgeService.load();
     addIcons({
       archiveOutline,
       createOutline,
@@ -71,5 +127,18 @@ export class MailSidebarComponent {
 
   openCompose(): void {
     this.compose.emit();
+  }
+
+  badge(
+    folder: string,
+  ) {
+
+    return this.badges()[folder]
+      ??
+      {
+        total: 0,
+        unread: 0,
+      };
+
   }
 }
