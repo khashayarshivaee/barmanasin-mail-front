@@ -59,6 +59,7 @@ export class MailTopbarComponent {
 
   readonly searchClick = output<void>();
   readonly accountClick = output<void>();
+  readonly menuClick = output<void>();
 
   readonly avatarUrl =
     input<string | null>(null);
@@ -90,12 +91,18 @@ export class MailTopbarComponent {
   openSearch(): void {
     this.searchClick.emit();
   }
+  openMenu(): void {
+    this.menuClick.emit();
+  }
 
 
   openAccount(): void {
     if (this.isLoggingOut()) {
       return;
     }
+
+
+
 
     const opening = !this.isAccountOpen();
 

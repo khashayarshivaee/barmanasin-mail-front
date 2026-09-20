@@ -1,19 +1,60 @@
-<div class="mail-shell">
+<div
+  class="mail-shell"
+  [class.mail-shell--sidebar-open]="isMobileSidebarOpen()"
+>
 
+
+  <!-- MOBILE OVERLAY -->
+  <div
+    class="mail-shell__overlay"
+    (click)="closeMobileSidebar()"
+  ></div>
+
+
+
+  <!-- SIDEBAR -->
   <aside class="mail-shell__sidebar">
+
+    <button
+      type="button"
+      class="mail-shell__close-sidebar"
+      (click)="closeMobileSidebar()"
+      aria-label="Close menu"
+    >
+      ×
+    </button>
+
+
     <ng-content select="[mail-sidebar]"></ng-content>
+
   </aside>
 
+
+
+
+  <!-- WORKSPACE -->
   <section class="mail-shell__workspace">
 
+
     <header class="mail-shell__topbar">
+
+
+
+
       <ng-content select="[mail-topbar]"></ng-content>
+
     </header>
 
+
+
     <main class="mail-shell__content">
+
       <ng-content select="[mail-content]"></ng-content>
+
     </main>
 
+
   </section>
+
 
 </div>

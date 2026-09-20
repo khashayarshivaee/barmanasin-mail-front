@@ -7,6 +7,26 @@ import {
   output,
 } from '@angular/core';
 
+import {
+  MailPinService,
+} from '../services/mail-pin.service';
+
+import {
+  IonIcon,
+} from '@ionic/angular';
+
+
+
+
+import {
+  addIcons,
+} from 'ionicons';
+
+
+import {
+  chevronUpOutline,
+  chevronDownOutline,
+} from 'ionicons/icons';
 
 import {
   input,
@@ -56,13 +76,13 @@ import {
   MailMessageViewComponent,
 } from '../message-view/mail-message-view.component';
 
-
 @Component({
   selector: 'app-mail-inbox',
   standalone: true,
   templateUrl: './mail-inbox.component.html',
   styleUrl: './mail-inbox.component.scss',
   imports: [
+    IonIcon,
     MailMessageListComponent,
     MailMessageViewComponent,
   ],
@@ -83,8 +103,16 @@ export class MailInboxComponent {
   private readonly destroyRef =
     inject(DestroyRef);
 
+  private readonly pinService =
+    inject(MailPinService);
+
+  readonly pinnedExpanded = signal(true);
+
   readonly replyDraftData =
     signal<MailComposeDraft | null>(null);
+
+  readonly pinnedMessages =
+    signal<MailMessageSummary[]>([]);
 
   private listScrollTop = 0;
 
@@ -137,6 +165,13 @@ export class MailInboxComponent {
 
 
   constructor() {
+
+    addIcons({
+      chevronUpOutline,
+      chevronDownOutline,
+    });
+
+
     effect(() => {
       const folder = this.activeFolder();
 
@@ -224,6 +259,9 @@ export class MailInboxComponent {
 
       starred:
       message.starred,
+
+      pinned:
+        false,
 
     };
 
@@ -559,6 +597,112 @@ On ${message.date}, ${
     this.starRequests.set(key, request);
   }
 
+  toggleMessagePin(
+    message: MailMessageSummary,
+  ): void {
+
+    const pinned =
+      !message.pinned;
+
+
+    if (pinned) {
+
+      this.pinService
+        .pin(
+          message.uid,
+          message.mailbox,
+        )
+        .pipe(
+          takeUntilDestroyed(
+            this.destroyRef,
+          ),
+        )
+        .subscribe({
+
+          next: () => {
+
+            this.updateSummaryPinned(
+              message.mailbox,
+              message.uid,
+              true,
+            );
+
+            this.loadPinnedMessages();
+
+          },
+
+
+          error: (error) => {
+
+            console.error(
+              '[Mail] Unable to update pin state.',
+              error,
+            );
+
+
+            if (
+              error.status === 422 &&
+              error.error?.errors?.pin?.[0]
+            ) {
+
+              window.alert(
+                error.error.errors.pin[0],
+              );
+
+            }
+
+
+            this.loadCurrentFolder();
+
+          },
+
+        });
+
+
+    } else {
+
+
+      this.pinService
+        .unpin(
+          message.uid,
+          message.mailbox,
+        )
+        .pipe(
+          takeUntilDestroyed(
+            this.destroyRef,
+          ),
+        )
+        .subscribe({
+
+          next: () => {
+
+            this.updateSummaryPinned(
+              message.mailbox,
+              message.uid,
+              false,
+            );
+
+            this.loadPinnedMessages();
+
+          },
+
+
+          error: (error) => {
+
+            console.error(
+              '[Mail] Unable to unpin message.',
+              error,
+            );
+
+          },
+
+        });
+
+
+    }
+
+  }
+
 
   closeMessage(): void {
     this.cancelReplyAll();
@@ -683,11 +827,16 @@ On ${message.date}, ${
     folder: MailFolder,
     forceRefresh = false,
   ): void {
+
     this.folderRequest?.unsubscribe();
+
+    this.loadPinnedMessages();
+
 
     if (forceRefresh) {
       this.isRefreshing.set(true);
     }
+
 
     if (
       folder !== 'inbox' &&
@@ -702,8 +851,32 @@ On ${message.date}, ${
     }
 
 
+
     const search =
       this.searchQuery().trim();
+
+
+
+    const applyPinnedState = (
+      messages: MailMessageSummary[],
+    ): MailMessageSummary[] => {
+
+      return messages.map(
+        message => ({
+          ...message,
+
+          pinned:
+            this.isMessagePinned(
+              message.mailbox,
+              message.uid,
+            ),
+
+        }),
+      );
+
+    };
+
+
 
 
     if (search !== '') {
@@ -722,17 +895,23 @@ On ${message.date}, ${
             ),
           )
           .subscribe({
+
             next: (response) => {
 
               this.messages.set(
-                response.messages.map(
-                  message =>
-                    this.mapMessage(message),
+                applyPinnedState(
+                  response.messages.map(
+                    message =>
+                      this.mapMessage(message),
+                  ),
                 ),
               );
 
+
               this.isRefreshing.set(false);
+
             },
+
 
             error: (error) => {
 
@@ -741,15 +920,22 @@ On ${message.date}, ${
                 error,
               );
 
+
               this.messages.set([]);
 
               this.isRefreshing.set(false);
+
             },
+
           });
 
 
       return;
+
     }
+
+
+
 
 
     const source =
@@ -766,6 +952,9 @@ On ${message.date}, ${
                 : this.inboxService.getInbox(forceRefresh);
 
 
+
+
+
     this.folderRequest =
       source
         .pipe(
@@ -774,17 +963,24 @@ On ${message.date}, ${
           ),
         )
         .subscribe({
+
           next: (response) => {
 
             this.messages.set(
-              response.messages.map(
-                message =>
-                  this.mapMessage(message),
+              applyPinnedState(
+                response.messages.map(
+                  message =>
+                    this.mapMessage(message),
+                ),
               ),
             );
 
+
             this.isRefreshing.set(false);
+
           },
+
+
 
           error: (error) => {
 
@@ -793,13 +989,16 @@ On ${message.date}, ${
               error,
             );
 
+
             this.messages.set([]);
 
             this.isRefreshing.set(false);
-          },
-        });
-  }
 
+          },
+
+        });
+
+  }
 
   private markMessageSeen(
     uid: string,
@@ -886,6 +1085,34 @@ On ${message.date}, ${
     );
   }
 
+  private updateSummaryPinned(
+    mailbox: string,
+    uid: string,
+    pinned: boolean,
+  ): void {
+
+    const id =
+      this.messageKey(
+        mailbox,
+        uid,
+      );
+
+
+    this.messages.update(
+      messages =>
+        messages.map(
+          message =>
+            message.id === id
+              ? {
+                ...message,
+                pinned,
+              }
+              : message,
+        ),
+    );
+
+  }
+
 
   private removeSummary(
     mailbox: string,
@@ -949,6 +1176,8 @@ On ${message.date}, ${
       receivedAt: message.date,
       unread: message.unread,
       starred: message.starred,
+      pinned: false,
+
     };
   }
 
@@ -1146,5 +1375,70 @@ On ${message.date}, ${
       usedAddresses.add(key);
       return true;
     });
+  }
+
+  private isMessagePinned(
+    mailbox: string,
+    uid: string,
+  ): boolean {
+
+    return this.pinnedMessages()
+      .some(
+        message =>
+          message.mailbox === mailbox &&
+          message.uid === uid,
+      );
+
+  }
+
+  private loadPinnedMessages(): void {
+
+    if (this.activeFolder() !== 'inbox') {
+      this.pinnedMessages.set([]);
+      return;
+    }
+
+
+    this.pinService
+      .getPinned()
+      .pipe(
+        takeUntilDestroyed(
+          this.destroyRef,
+        ),
+      )
+      .subscribe({
+
+        next: (response) => {
+
+          this.pinnedMessages.set(
+            response.pinned.map(
+              message => ({
+                ...message,
+                pinned: true,
+              }),
+            ),
+          );
+
+        },
+
+
+        error: (error) => {
+
+          console.error(
+            '[Mail] Unable to load pinned messages.',
+            error,
+          );
+
+          this.pinnedMessages.set([]);
+
+        },
+
+      });
+
+  }
+  togglePinnedSection(): void {
+    this.pinnedExpanded.update(
+      value => !value
+    );
   }
 }

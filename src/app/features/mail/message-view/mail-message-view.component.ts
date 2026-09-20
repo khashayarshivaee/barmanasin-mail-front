@@ -14,6 +14,7 @@ import {
   IonCard,
   IonIcon,
   IonSkeletonText,
+  IonPopover,
 } from '@ionic/angular';
 
 import {
@@ -25,6 +26,7 @@ import {
   documentOutline,
   documentTextOutline,
   downloadOutline,
+  ellipsisVerticalOutline,
   imageOutline,
   trashOutline,
 } from 'ionicons/icons';
@@ -52,6 +54,7 @@ type AttachmentPreviewState =
     IonCard,
     IonIcon,
     IonSkeletonText,
+    IonPopover,
   ],
 })
 export class MailMessageViewComponent
@@ -103,6 +106,7 @@ export class MailMessageViewComponent
       documentOutline,
       documentTextOutline,
       downloadOutline,
+      ellipsisVerticalOutline,
       imageOutline,
       trashOutline,
     });

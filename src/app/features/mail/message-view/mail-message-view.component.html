@@ -22,7 +22,7 @@
 
       <button
         type="button"
-        class="message-view__action"
+        class="message-view__action message-view__action--reply"
         aria-label="Reply message"
         title="Reply"
         (click)="onReply()"
@@ -34,7 +34,7 @@
 
       <button
         type="button"
-        class="message-view__action"
+        class="message-view__action message-view__action--reply-all"
         aria-label="Reply to all recipients"
         title="Reply All"
         [disabled]="isPreparingReplyAll()"
@@ -84,6 +84,71 @@
           </span>
         </button>
       }
+
+      <button
+        type="button"
+        class="message-view__more"
+        id="message-actions-trigger"
+        aria-label="More actions"
+      >
+        <ion-icon
+          name="ellipsis-vertical-outline"
+          aria-hidden="true"
+        ></ion-icon>
+      </button>
+
+
+      <ion-popover
+        trigger="message-actions-trigger"
+        triggerAction="click"
+      >
+        <ng-template>
+
+          <div class="message-actions-menu">
+
+            <button
+              type="button"
+              (click)="onReply()"
+            >
+              Reply
+            </button>
+
+
+            <button
+              type="button"
+              (click)="onReplyAll()"
+            >
+              Reply All
+            </button>
+
+
+            @if (canArchive()) {
+
+              <button
+                type="button"
+                (click)="onArchive()"
+              >
+                Archive
+              </button>
+
+            }
+
+
+            @if (canTrash()) {
+
+              <button
+                type="button"
+                (click)="onTrash()"
+              >
+                Trash
+              </button>
+
+            }
+
+          </div>
+
+        </ng-template>
+      </ion-popover>
 
 
       <div class="message-view__toolbar-meta">

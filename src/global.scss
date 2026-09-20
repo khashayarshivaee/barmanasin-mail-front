@@ -61,3 +61,37 @@ ion-modal.mail-search-modal::part(content) {
     border-radius: 0;
   }
 }
+
+ion-modal.mail-welcome-modal {
+  --width: min(560px, calc(100vw - 32px));
+  --height: auto;
+
+  --border-radius: 18px;
+
+  --box-shadow:
+    0 24px 70px rgba(17, 20, 18, 0.18);
+
+  --backdrop-opacity: 0.42;
+}
+
+
+ion-modal.mail-welcome-modal::part(content) {
+  overflow: hidden;
+
+  border:
+    1px solid rgba(17, 20, 18, 0.08);
+
+  background:
+    #f3f1eb;
+}
+
+
+@media (max-width: 560px) {
+
+  ion-modal.mail-welcome-modal {
+    --width: calc(100vw - 20px);
+
+    --border-radius: 16px;
+  }
+
+}

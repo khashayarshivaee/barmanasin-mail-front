@@ -61,10 +61,112 @@
 
 } @else {
 
+  @if (
+    activeFolder() === 'inbox'
+    &&
+    pinnedMessages().length > 0
+    ) {
+
+    @if (
+      activeFolder() === 'inbox'
+      &&
+      pinnedMessages().length > 0
+      ) {
+
+    <section class="pinned-section">
+
+
+      <button
+        type="button"
+        class="pinned-section__header"
+        (click)="togglePinnedSection()"
+      >
+
+    <span>
+      🔖 Pinned
+    </span>
+
+
+        <span class="pinned-section__count">
+      {{ pinnedMessages().length }}
+    </span>
+
+
+        <ion-icon
+          class="pinned-section__arrow"
+          [name]="
+    pinnedExpanded()
+      ? 'chevron-up-outline'
+      : 'chevron-down-outline'
+  "
+        ></ion-icon>
+
+      </button>
+
+
+
+      @if (pinnedExpanded()) {
+
+
+        <div class="pinned-section__body">
+
+
+          @for (
+            message of pinnedMessages();
+            track message.id
+            ) {
+
+
+            <div
+              class="pinned-item"
+              (click)="openMessage(message)"
+            >
+
+              <div class="pinned-item__content">
+
+                <strong>
+                  {{ message.senderName }}
+                </strong>
+
+                <span>
+              {{ message.subject }}
+            </span>
+
+              </div>
+
+
+
+              <button
+                type="button"
+                class="pinned-item__remove"
+                (click)="toggleMessagePin(message); $event.stopPropagation()"
+              >
+                Unpin
+              </button>
+
+
+            </div>
+
+
+          }
+
+
+        </div>
+
+
+      }
+
+
+    </section>
+    }
+
+  }
+
   <app-mail-message-list
     [title]="folderTitle()"
     [eyebrow]="folderEyebrow()"
     [toolbarLabel]="folderToolbarLabel()"
+    [showPin]="activeFolder() === 'inbox'"
     [messages]="messages()"
     [searchQuery]="searchQuery()"
     [selectedMessageId]="selectedMessageId()"
@@ -72,6 +174,7 @@
     (beforeOpen)="saveListScroll($event)"
     (messageSelect)="openMessage($event)"
     (starChange)="toggleMessageStar($event)"
+    (pinChange)="toggleMessagePin($event)"
     (refresh)="refreshCurrentFolder()"
   ></app-mail-message-list>
 

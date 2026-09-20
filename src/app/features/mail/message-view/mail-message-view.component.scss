@@ -209,6 +209,7 @@ button {
 }
 
 
+
 /* -------------------------------------------------------
    TOOLBAR META
 ------------------------------------------------------- */
@@ -1152,10 +1153,10 @@ max-width: 980px
   }
 
 
-  .message-view__action span {
-    display:
-      none;
-  }
+  //.message-view__action span {
+  //  display:
+  //    none;
+  //}
 
 
   .message-view__toolbar-meta {
@@ -1329,6 +1330,153 @@ max-width: 980px
   .message-view__attachment-file-preview {
     aspect-ratio:
       16 / 9;
+  }
+
+}
+/* -------------------------------------------------------
+   EXTRA MOBILE TOOLBAR TUNING
+------------------------------------------------------- */
+
+@media (max-width:760px) {
+
+
+
+  .message-view__action span {
+    display:inline;
+  }
+
+
+  .message-view__action {
+
+    width:auto;
+    min-width:72px;
+
+    padding-inline:12px;
+
+    gap:6px;
+
+  }
+
+  .message-view__toolbar {
+
+    padding-inline:12px;
+
+    gap:8px;
+
+  }
+
+
+  .message-view__back {
+
+    gap:6px;
+
+    font-size:0;
+
+  }
+
+
+  .message-view__back span:first-child {
+
+    font-size:22px;
+
+  }
+
+
+  .message-view__toolbar-actions {
+
+    gap:6px;
+
+  }
+
+
+  .message-view__action {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+
+  }
+
+
+  .message-view__action ion-icon {
+
+    font-size:15px;
+
+  }
+
+  .message-view__action--reply,
+  .message-view__action--reply-all {
+
+    display:none;
+
+  }
+
+}
+.message-view__more {
+
+  display:none;
+
+}
+
+
+.message-actions-menu {
+
+  padding:8px;
+
+  min-width:160px;
+
+}
+
+
+.message-actions-menu button {
+
+  width:100%;
+
+  padding:12px;
+
+  border:0;
+
+  background:transparent;
+
+  text-align:left;
+
+  font-size:13px;
+
+  cursor:pointer;
+
+}
+
+
+.message-actions-menu button:hover {
+
+  background:rgba(17,20,18,.05);
+
+}
+
+
+@media(max-width:760px){
+
+  .message-view__more {
+
+    width:36px;
+    height:36px;
+
+    display:grid;
+    place-items:center;
+
+    border:1px solid rgba(17,20,18,.1);
+
+    background:transparent;
+
+  }
+
+
+  .message-view__more ion-icon {
+
+    font-size:18px;
+    color: black;
+
   }
 
 }

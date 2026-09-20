@@ -1323,3 +1323,171 @@ button {
   }
 
 }
+
+/* -------------------------------------------------------
+   MOBILE COMPOSE TUNING
+------------------------------------------------------- */
+
+@media (max-width:760px) {
+
+
+  .compose__toolbar {
+
+    min-height:56px;
+
+    padding:0 14px;
+
+    gap:12px;
+
+  }
+
+
+  .compose__toolbar-copy strong {
+
+    font-size:13px;
+
+  }
+
+
+
+  .compose__toolbar-actions {
+
+    gap:5px;
+
+  }
+
+
+
+  .compose__save-draft,
+  .compose__discard {
+
+    min-height:30px;
+
+    padding:0 8px;
+
+    font-size:8px;
+
+  }
+
+
+
+
+  .compose__content {
+
+    padding:
+
+      18px 14px 30px;
+
+  }
+
+
+
+  .compose__field {
+
+    grid-template-columns:
+
+      70px minmax(0,1fr);
+
+  }
+
+
+
+  .compose__field label {
+
+    font-size:9px;
+
+  }
+
+
+
+  .compose__field input {
+
+    font-size:13px;
+
+  }
+
+
+
+  .compose__field--subject input {
+
+    font-size:15px;
+
+  }
+
+
+
+
+  .compose__body textarea {
+
+    min-height:220px;
+
+    font-size:14px;
+
+  }
+
+
+
+
+  .compose__attachments {
+
+    margin-top:22px;
+
+  }
+
+
+
+  .compose__attachment {
+
+    padding:10px;
+
+    gap:8px;
+
+  }
+
+
+
+
+  .compose__attachment-copy strong {
+
+    max-width:170px;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+
+  }
+
+
+
+
+  .compose__footer {
+
+    min-height:64px;
+
+    padding:0 14px;
+
+  }
+
+
+
+  .compose__send {
+
+    min-height:40px;
+
+    padding-inline:14px;
+
+  }
+
+  .compose__save-draft,
+  .compose__discard {
+
+    letter-spacing: .05em;
+
+    white-space: nowrap;
+
+  }
+
+
+}

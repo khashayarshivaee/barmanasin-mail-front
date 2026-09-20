@@ -11,10 +11,13 @@ import { IonIcon } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 
 import {
+  bookmark,
+  bookmarkOutline,
   star,
   starOutline,
   refreshOutline,
 } from 'ionicons/icons';
+
 
 export interface MailMessageSummary {
   id: string;
@@ -32,6 +35,7 @@ export interface MailMessageSummary {
 
   unread: boolean;
   starred: boolean;
+  pinned: boolean;
 }
 
 @Component({
@@ -46,6 +50,9 @@ export interface MailMessageSummary {
 export class MailMessageListComponent implements AfterViewInit {
   readonly title =
     input('Inbox');
+
+  readonly showPin =
+    input(false);
 
   readonly searchQuery =
     input('');
@@ -86,11 +93,16 @@ export class MailMessageListComponent implements AfterViewInit {
   readonly starChange =
     output<MailMessageSummary>();
 
+  readonly pinChange =
+    output<MailMessageSummary>();
+
   constructor() {
     addIcons({
       star,
       starOutline,
       refreshOutline,
+      bookmark,
+      bookmarkOutline,
     });
   }
   ngAfterViewInit(): void {
@@ -165,6 +177,19 @@ export class MailMessageListComponent implements AfterViewInit {
     this.starChange.emit(
       message,
     );
+  }
+
+  togglePin(
+    event: Event,
+    message: MailMessageSummary,
+  ): void {
+
+    event.stopPropagation();
+
+    this.pinChange.emit(
+      message,
+    );
+
   }
 
   highlight(

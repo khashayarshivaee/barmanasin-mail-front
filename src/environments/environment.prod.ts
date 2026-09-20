@@ -1,4 +1,6 @@
 export const environment = {
   production: true,
-  apiBaseUrl: '',
+
+  apiBaseUrl:
+    'https://mail.barmanasin.com',
 };

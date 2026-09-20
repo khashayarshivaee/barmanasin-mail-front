@@ -9,6 +9,10 @@ import {
 } from '@angular/core';
 
 import {
+  MailWelcomeComponent,
+} from '../features/mail/welcome/mail-welcome.component';
+
+import {
   ViewChild,
 } from '@angular/core';
 
@@ -25,6 +29,8 @@ import {
   IonContent,
   ModalController,
 } from '@ionic/angular';
+
+
 
 import {
   MailSearchModalComponent,
@@ -81,9 +87,13 @@ import {
     MailTopbarComponent,
     MailInboxComponent,
     MailComposeComponent,
+    MailWelcomeComponent,
   ],
 })
+
+
 export class HomePage implements OnInit, AfterViewInit {
+
 
   private readonly mailSendService =
     inject(MailSendService);
@@ -132,6 +142,9 @@ export class HomePage implements OnInit, AfterViewInit {
   @ViewChild(
     MailInboxComponent,
   )
+
+  private mailShell?: MailShellComponent;
+
   private mailInbox?: MailInboxComponent;
   private inboxReady = false;
 
@@ -146,12 +159,16 @@ export class HomePage implements OnInit, AfterViewInit {
 
           this.currentUser.set(user);
 
-
           this.mailRealtime.connect(
             user.id,
           );
 
 
+          if (user.show_welcome) {
+
+            void this.openWelcome();
+
+          }
 
         },
 
@@ -475,5 +492,25 @@ export class HomePage implements OnInit, AfterViewInit {
       );
 
   }
+
+  private async openWelcome(): Promise<void> {
+
+    const modal =
+      await this.modalController.create({
+        component:
+        MailWelcomeComponent,
+
+        cssClass:
+          'mail-welcome-modal',
+
+        backdropDismiss:
+          false,
+      });
+
+
+    await modal.present();
+
+  }
+
 
 }

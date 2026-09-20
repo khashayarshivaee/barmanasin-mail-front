@@ -1,0 +1,92 @@
+<section class="mail-welcome">
+
+  <div class="mail-welcome__icon">
+    <ion-icon
+      name="mail-outline"
+      aria-hidden="true"
+    ></ion-icon>
+  </div>
+
+
+  <div class="mail-welcome__english">
+
+    <span class="mail-welcome__eyebrow">
+      BARMANASIN MAIL
+    </span>
+
+    <h1>
+      Welcome to Barmanasin Mail
+    </h1>
+
+    <p>
+      Your mailbox is ready. You can now send and receive messages securely.
+    </p>
+
+  </div>
+
+
+  <div class="mail-welcome__divider"></div>
+
+
+  <div
+    class="mail-welcome__persian"
+    dir="rtl"
+    lang="fa"
+  >
+
+    <h2>
+      به Barmanasin Mail خوش آمدید
+    </h2>
+
+    <p>
+      صندوق ایمیل شما آماده است.
+      اکنون می‌توانید پیام‌های خود را به‌صورت امن ارسال و دریافت کنید.
+    </p>
+
+  </div>
+
+
+  @if (errorMessage()) {
+
+    <p
+      class="mail-welcome__error"
+      role="alert"
+    >
+      {{ errorMessage() }}
+    </p>
+
+  }
+
+
+  <button
+    type="button"
+    class="mail-welcome__continue"
+    [disabled]="isSaving()"
+    (click)="continue()"
+  >
+
+    @if (isSaving()) {
+
+      <span>
+        Please wait...
+      </span>
+
+    } @else {
+
+      <span>
+        Continue
+      </span>
+
+      <span
+        class="mail-welcome__continue-fa"
+        dir="rtl"
+        lang="fa"
+      >
+        ادامه
+      </span>
+
+    }
+
+  </button>
+
+</section>

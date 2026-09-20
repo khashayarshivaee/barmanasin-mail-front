@@ -100,6 +100,9 @@ export class MailSidebarComponent {
   readonly compose =
     output<void>();
 
+  readonly closeRequested =
+    output<void>();
+
   constructor() {
     this.badgeService.load();
     addIcons({
@@ -116,6 +119,7 @@ export class MailSidebarComponent {
   selectFolder(
     folder: MailFolder,
   ): void {
+
     this.folderState.setFolder(
       folder,
     );
@@ -123,10 +127,17 @@ export class MailSidebarComponent {
     this.folderChange.emit(
       folder,
     );
+
+    this.closeRequested.emit();
+
   }
 
   openCompose(): void {
+
     this.compose.emit();
+
+    this.closeRequested.emit();
+
   }
 
   badge(
