@@ -16,3 +16,183 @@
 .mail-page::part(scroll) {
   overflow: hidden;
 }
+/* -------------------------------------------------------
+   INITIAL LOADER
+------------------------------------------------------- */
+
+.mail-loader {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 10000;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #f3f1eb;
+
+  color: #101310;
+
+  pointer-events: all;
+}
+
+
+.mail-loader__brand {
+  font-size: 10px;
+
+  font-weight: 600;
+
+  letter-spacing: .24em;
+
+  opacity: .48;
+}
+
+
+.mail-loader__title {
+  margin-top: 8px;
+
+  font-size: 28px;
+
+  font-weight: 500;
+
+  letter-spacing: -.04em;
+}
+
+
+.mail-loader__indicator {
+  margin-top: 28px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+
+.mail-loader__indicator span {
+  width: 4px;
+  height: 4px;
+
+  border-radius: 50%;
+
+  background: #101310;
+
+  opacity: .2;
+
+  animation:
+    mail-loader-pulse 1.15s ease-in-out infinite;
+}
+
+
+.mail-loader__indicator span:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+
+.mail-loader__indicator span:nth-child(3) {
+  animation-delay: 240ms;
+}
+
+
+@keyframes mail-loader-pulse {
+
+  0%,
+  100% {
+    opacity: .18;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: .9;
+    transform: translateY(-3px);
+  }
+
+}
+
+/* -------------------------------------------------------
+   MOBILE COMPOSE BUTTON
+------------------------------------------------------- */
+
+.mobile-compose-button {
+  display: none;
+}
+
+
+@media (max-width: 760px) {
+
+  .mobile-compose-button {
+    position: fixed;
+
+    right: 16px;
+
+    bottom:
+      calc(
+        18px +
+        env(safe-area-inset-bottom)
+      );
+
+    z-index: 120;
+
+    height: 50px;
+
+    padding:
+      0
+      20px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    border: 0;
+
+    border-radius: 999px;
+
+    background: #101310;
+
+    color: #f3f1eb;
+
+    font: inherit;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    letter-spacing: .01em;
+
+    box-shadow:
+      0 12px 30px rgba(17, 20, 18, .18);
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color:
+      transparent;
+  }
+
+
+  .mobile-compose-button__plus {
+    font-size: 22px;
+
+    font-weight: 300;
+
+    line-height: 1;
+
+    transform:
+      translateY(-1px);
+  }
+
+
+  .mobile-compose-button:active {
+    transform:
+      scale(.97);
+  }
+
+}

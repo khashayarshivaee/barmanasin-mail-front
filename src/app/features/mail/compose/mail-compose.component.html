@@ -4,6 +4,23 @@
 
     <div class="compose__toolbar-copy">
 
+      <button
+        type="button"
+        class="compose__close"
+        (click)="onClose()"
+        [disabled]="
+    isSending() ||
+    isSavingDraft() ||
+    isDeletingDraft()
+  "
+        aria-label="Close compose"
+      >
+        <ion-icon
+          name="close-outline"
+          aria-hidden="true"
+        ></ion-icon>
+      </button>
+
       <span class="compose__eyebrow">
         NEW MESSAGE
       </span>
@@ -51,6 +68,8 @@
           Discard
         }
       </button>
+
+
 
     </div>
 

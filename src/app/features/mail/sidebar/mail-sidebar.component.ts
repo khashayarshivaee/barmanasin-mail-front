@@ -1,6 +1,7 @@
 import {
   Component,
   inject,
+  input,
   output,
 } from '@angular/core';
 
@@ -14,6 +15,7 @@ import {
   fileTrayFullOutline,
   mailOutline,
   paperPlaneOutline,
+  personCircleOutline,
   starOutline,
   trashOutline,
 } from 'ionicons/icons';
@@ -103,6 +105,12 @@ export class MailSidebarComponent {
   readonly closeRequested =
     output<void>();
 
+  readonly teamProfileActive =
+    input(false);
+
+  readonly teamProfileRequested =
+    output<void>();
+
   constructor() {
     this.badgeService.load();
     addIcons({
@@ -111,6 +119,7 @@ export class MailSidebarComponent {
       fileTrayFullOutline,
       mailOutline,
       paperPlaneOutline,
+      personCircleOutline,
       starOutline,
       trashOutline,
     });
@@ -150,6 +159,14 @@ export class MailSidebarComponent {
         total: 0,
         unread: 0,
       };
+
+  }
+
+  openTeamProfile(): void {
+
+    this.teamProfileRequested.emit();
+
+    this.closeRequested.emit();
 
   }
 }

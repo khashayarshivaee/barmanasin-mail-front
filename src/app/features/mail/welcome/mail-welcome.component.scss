@@ -137,6 +137,65 @@
   line-height: 2;
 }
 
+/* -------------------------------------------------------
+   PWA HINT
+------------------------------------------------------- */
+
+.mail-welcome__pwa {
+  margin-top: 24px;
+
+  padding: 16px 18px;
+
+  text-align: right;
+
+  border:
+    1px solid rgba(17, 20, 18, 0.08);
+
+  background:
+    rgba(255, 255, 255, 0.32);
+}
+
+
+.mail-welcome__pwa strong {
+  display: block;
+
+  color: #111412;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  line-height: 1.9;
+}
+
+
+.mail-welcome__pwa p {
+  margin: 5px 0 0;
+
+  color:
+    rgba(17, 20, 18, 0.52);
+
+  font-size: 11px;
+
+  line-height: 1.95;
+}
+
+
+.mail-welcome__pwa small {
+  display: block;
+
+  margin-top: 10px;
+
+  color:
+    rgba(17, 20, 18, 0.38);
+
+  font-size: 9px;
+  font-weight: 600;
+
+  letter-spacing: 0.04em;
+
+  text-align: left;
+}
+
 
 /* -------------------------------------------------------
    ERROR
@@ -247,6 +306,21 @@
 
   .mail-welcome__continue {
     margin-top: 26px;
+  }
+  .mail-welcome__pwa {
+    margin-top: 20px;
+
+    padding: 14px 15px;
+  }
+
+
+  .mail-welcome__pwa strong {
+    font-size: 11px;
+  }
+
+
+  .mail-welcome__pwa p {
+    font-size: 10.5px;
   }
 
 }

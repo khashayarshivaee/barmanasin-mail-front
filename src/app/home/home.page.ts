@@ -9,6 +9,10 @@ import {
 } from '@angular/core';
 
 import {
+  MailTeamProfileComponent,
+} from '../features/mail/team-profile/mail-team-profile.component';
+
+import {
   MailWelcomeComponent,
 } from '../features/mail/welcome/mail-welcome.component';
 
@@ -88,6 +92,7 @@ import {
     MailInboxComponent,
     MailComposeComponent,
     MailWelcomeComponent,
+    MailTeamProfileComponent,
   ],
 })
 
@@ -101,8 +106,15 @@ export class HomePage implements OnInit, AfterViewInit {
   private readonly folderState =
     inject(MailFolderStateService);
 
+  readonly activeFolder =
+    this.folderState.activeFolder;
+
   private readonly modalController =
     inject(ModalController);
+
+
+  readonly isTeamProfileOpen =
+    signal(false);
 
 
   readonly isComposeOpen =
@@ -126,6 +138,9 @@ export class HomePage implements OnInit, AfterViewInit {
     signal<MailComposeDraft | null>(
       null,
     );
+
+  readonly isInitialLoading =
+    signal(true);
 
   private readonly mailAuthService =
     inject(MailAuthService);
@@ -169,10 +184,13 @@ export class HomePage implements OnInit, AfterViewInit {
             void this.openWelcome();
 
           }
+          this.isInitialLoading.set(false);
 
         },
 
         error: (error) => {
+
+          this.isInitialLoading.set(false);
           console.error(
             '[Mail] Unable to load account.',
             error,
@@ -288,7 +306,19 @@ export class HomePage implements OnInit, AfterViewInit {
 
 
   onFolderChange(): void {
+
+    this.isTeamProfileOpen.set(false);
+
     this.closeCompose();
+
+  }
+
+  openTeamProfile(): void {
+
+    this.closeCompose();
+
+    this.isTeamProfileOpen.set(true);
+
   }
 
 

@@ -155,6 +155,9 @@ export class MailComposeComponent implements OnDestroy {
   readonly draftSaved =
     output<void>();
 
+  readonly closeRequested =
+    output<void>();
+
 
 
   readonly isSending =
@@ -1342,6 +1345,23 @@ export class MailComposeComponent implements OnDestroy {
         },
 
       });
+  }
+
+
+  onClose(): void {
+
+    if (
+      this.isSending()
+      ||
+      this.isSavingDraft()
+      ||
+      this.isDeletingDraft()
+    ) {
+      return;
+    }
+
+    this.closeRequested.emit();
+
   }
 
 

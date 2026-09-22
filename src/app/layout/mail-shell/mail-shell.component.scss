@@ -343,3 +343,30 @@
 
 
 }
+
+
+/* -------------------------------------------------------
+   PWA / iOS SAFE AREA
+------------------------------------------------------- */
+
+@media (display-mode: standalone) and (max-width: 760px) {
+
+  .mail-shell__workspace {
+    grid-template-rows:
+      calc(64px + env(safe-area-inset-top))
+      minmax(0, 1fr);
+  }
+
+  .mail-shell__topbar {
+    box-sizing: border-box;
+
+    padding-top:
+      env(safe-area-inset-top);
+
+    background: #f3f1eb;
+
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+}

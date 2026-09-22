@@ -1,0 +1,751 @@
+<section class="team-profile">
+
+  <header class="team-profile__header">
+
+    <div>
+      <span class="team-profile__eyebrow">
+        OUR TEAM
+      </span>
+
+      <h1>
+        Team Profile
+      </h1>
+
+      <p>
+        Manage how your profile appears on the Barmanasin website.
+      </p>
+    </div>
+
+
+    @if (profile()) {
+
+      <span
+        class="profile-status"
+        [class.profile-status--draft]="
+          profile()?.approval_status === 'draft'
+        "
+        [class.profile-status--pending]="
+          profile()?.approval_status === 'pending'
+        "
+        [class.profile-status--approved]="
+          profile()?.approval_status === 'approved'
+        "
+        [class.profile-status--rejected]="
+          profile()?.approval_status === 'rejected'
+        "
+      >
+        <span class="profile-status__dot"></span>
+
+        {{ statusLabel() }}
+      </span>
+
+    }
+
+  </header>
+
+
+  @if (isLoading()) {
+
+    <div class="team-profile__loading">
+
+      <div class="team-profile__loading-mark">
+        B
+      </div>
+
+      <span>
+        Loading your profile…
+      </span>
+
+    </div>
+
+  } @else {
+
+    <div class="team-profile__layout">
+
+
+      <!--
+      ================================================================
+      Preview
+      ================================================================
+      -->
+
+      <aside class="profile-preview">
+
+        <div class="profile-preview__sticky">
+
+          <span class="profile-preview__label">
+            PUBLIC PREVIEW
+          </span>
+
+
+          <article class="profile-card">
+
+            <div class="profile-card__media">
+
+              @if (profile()?.photo_url) {
+
+                <img
+                  [src]="profile()?.photo_url"
+                  alt=""
+                >
+
+              } @else {
+
+                <div class="profile-card__placeholder">
+                  B
+                </div>
+
+              }
+
+
+              <div class="profile-card__photo-actions">
+
+                <label
+                  class="photo-action"
+                  [class.photo-action--disabled]="
+                    isUploadingPhoto()
+                    || isDeletingPhoto()
+                  "
+                >
+
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    (change)="onPhotoSelected($event)"
+                    [disabled]="
+                      isUploadingPhoto()
+                      || isDeletingPhoto()
+                    "
+                  >
+
+                  @if (isUploadingPhoto()) {
+                    Uploading…
+                  } @else {
+                    Change photo
+                  }
+
+                </label>
+
+
+                @if (profile()?.has_custom_photo) {
+
+                  <button
+                    type="button"
+                    class="photo-action photo-action--danger"
+                    (click)="deletePhoto()"
+                    [disabled]="
+                      isUploadingPhoto()
+                      || isDeletingPhoto()
+                    "
+                  >
+                    @if (isDeletingPhoto()) {
+                      Removing…
+                    } @else {
+                      Remove
+                    }
+                  </button>
+
+                }
+
+              </div>
+
+            </div>
+
+
+            <div class="profile-card__body">
+
+              <span class="profile-card__department">
+
+                {{
+                  form.controls.department_en.value
+                  || 'Barmanasin'
+                }}
+
+              </span>
+
+
+              <h2>
+
+                {{
+                  form.controls.name_en.value
+                  || 'Your name'
+                }}
+
+              </h2>
+
+
+              <p class="profile-card__role">
+
+                {{
+                  form.controls.job_title_en.value
+                  || 'Your position'
+                }}
+
+              </p>
+
+
+              @if (form.controls.bio_en.value) {
+
+                <p class="profile-card__bio">
+                  {{ form.controls.bio_en.value }}
+                </p>
+
+              }
+
+
+              <div class="profile-card__contact">
+
+                @if (
+                  form.controls.show_email.value
+                  && form.controls.public_email.value
+                  ) {
+
+                  <span>
+                    {{ form.controls.public_email.value }}
+                  </span>
+
+                }
+
+
+                @if (
+                  form.controls.show_phone.value
+                  && form.controls.public_phone.value
+                  ) {
+
+                  <span>
+                    {{ form.controls.public_phone.value }}
+                  </span>
+
+                }
+
+
+                @if (form.controls.linkedin_url.value) {
+
+                  <span>
+                    LinkedIn
+                  </span>
+
+                }
+
+              </div>
+
+            </div>
+
+          </article>
+
+
+          <p class="profile-preview__note">
+            This preview represents the information that may appear
+            publicly after approval.
+          </p>
+
+        </div>
+
+      </aside>
+
+
+      <!--
+      ================================================================
+      Form
+      ================================================================
+      -->
+
+      <form
+        class="profile-form"
+        [formGroup]="form"
+        (ngSubmit)="save()"
+      >
+
+
+        <!-- Identity -->
+
+        <section class="profile-form__section">
+
+          <div class="profile-form__section-heading">
+
+            <span>
+              01
+            </span>
+
+            <div>
+              <h2>
+                Identity
+              </h2>
+
+              <p>
+                Your name and professional position in both languages.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="profile-form__grid">
+
+            <label class="field">
+
+              <span class="field__label">
+                Name — English
+              </span>
+
+              <input
+                type="text"
+                formControlName="name_en"
+                maxlength="120"
+                autocomplete="name"
+                placeholder="Morteza"
+              >
+
+            </label>
+
+
+            <label
+              class="field"
+              dir="rtl"
+            >
+
+              <span class="field__label">
+                نام — فارسی
+              </span>
+
+              <input
+                type="text"
+                formControlName="name_fa"
+                maxlength="120"
+                placeholder="مرتضی"
+              >
+
+            </label>
+
+
+            <label class="field">
+
+              <span class="field__label">
+                Job title — English
+              </span>
+
+              <input
+                type="text"
+                formControlName="job_title_en"
+                maxlength="160"
+                placeholder="Project Engineer"
+              >
+
+            </label>
+
+
+            <label
+              class="field"
+              dir="rtl"
+            >
+
+              <span class="field__label">
+                عنوان شغلی — فارسی
+              </span>
+
+              <input
+                type="text"
+                formControlName="job_title_fa"
+                maxlength="160"
+                placeholder="مهندس پروژه"
+              >
+
+            </label>
+
+
+            <label class="field">
+
+              <span class="field__label">
+                Department — English
+              </span>
+
+              <input
+                type="text"
+                formControlName="department_en"
+                maxlength="160"
+                placeholder="Engineering"
+              >
+
+            </label>
+
+
+            <label
+              class="field"
+              dir="rtl"
+            >
+
+              <span class="field__label">
+                دپارتمان — فارسی
+              </span>
+
+              <input
+                type="text"
+                formControlName="department_fa"
+                maxlength="160"
+                placeholder="مهندسی"
+              >
+
+            </label>
+
+          </div>
+
+        </section>
+
+
+        <!-- Biography -->
+
+        <section class="profile-form__section">
+
+          <div class="profile-form__section-heading">
+
+            <span>
+              02
+            </span>
+
+            <div>
+              <h2>
+                Biography
+              </h2>
+
+              <p>
+                A concise introduction for your public team profile.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="profile-form__grid">
+
+            <label class="field field--full">
+
+              <span class="field__label">
+                Biography — English
+              </span>
+
+              <textarea
+                formControlName="bio_en"
+                rows="6"
+                maxlength="2000"
+                placeholder="Write a short professional introduction…"
+              ></textarea>
+
+            </label>
+
+
+            <label
+              class="field field--full"
+              dir="rtl"
+            >
+
+              <span class="field__label">
+                درباره من — فارسی
+              </span>
+
+              <textarea
+                formControlName="bio_fa"
+                rows="6"
+                maxlength="2000"
+                placeholder="یک معرفی کوتاه حرفه‌ای بنویسید…"
+              ></textarea>
+
+            </label>
+
+          </div>
+
+        </section>
+
+
+        <!-- Contact -->
+
+        <section class="profile-form__section">
+
+          <div class="profile-form__section-heading">
+
+            <span>
+              03
+            </span>
+
+            <div>
+              <h2>
+                Contact
+              </h2>
+
+              <p>
+                Choose which professional contact details may be public.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="profile-form__grid">
+
+            <label class="field field--full">
+
+              <span class="field__label">
+                LinkedIn
+              </span>
+
+              <input
+                type="url"
+                formControlName="linkedin_url"
+                maxlength="500"
+                inputmode="url"
+                placeholder="https://linkedin.com/in/..."
+              >
+
+            </label>
+
+
+            <label class="field">
+
+              <span class="field__label">
+                Public email
+              </span>
+
+              <input
+                type="email"
+                formControlName="public_email"
+                maxlength="255"
+                autocomplete="email"
+                placeholder="name@barmanasin.com"
+              >
+
+            </label>
+
+
+            <label class="field">
+
+              <span class="field__label">
+                Public phone
+              </span>
+
+              <input
+                type="tel"
+                formControlName="public_phone"
+                maxlength="50"
+                autocomplete="tel"
+                placeholder="+98 ..."
+              >
+
+            </label>
+
+
+            <label class="visibility-option">
+
+              <input
+                type="checkbox"
+                formControlName="show_email"
+              >
+
+              <span class="visibility-option__control"></span>
+
+              <span>
+                <strong>
+                  Show email
+                </strong>
+
+                <small>
+                  Display this email on your public profile.
+                </small>
+              </span>
+
+            </label>
+
+
+            <label class="visibility-option">
+
+              <input
+                type="checkbox"
+                formControlName="show_phone"
+              >
+
+              <span class="visibility-option__control"></span>
+
+              <span>
+                <strong>
+                  Show phone
+                </strong>
+
+                <small>
+                  Display this phone number publicly.
+                </small>
+              </span>
+
+            </label>
+
+          </div>
+
+        </section>
+
+
+        <!-- Publishing -->
+
+        <section class="profile-form__section profile-form__section--publishing">
+
+          <div class="profile-form__section-heading">
+
+            <span>
+              04
+            </span>
+
+            <div>
+              <h2>
+                Publishing
+              </h2>
+
+              <p>
+                Submit your profile for inclusion in the Our Team section.
+              </p>
+            </div>
+
+          </div>
+
+
+          <label class="public-option">
+
+            <input
+              type="checkbox"
+              formControlName="is_public"
+            >
+
+            <span class="public-option__control"></span>
+
+
+            <span class="public-option__content">
+
+              <strong>
+                Include my profile on the Barmanasin website
+              </strong>
+
+              <small>
+                Your profile will only become publicly visible after
+                approval by an administrator.
+              </small>
+
+            </span>
+
+          </label>
+
+
+          @if (
+            profile()?.approval_status === 'pending'
+            ) {
+
+            <div class="approval-note">
+              Your profile is currently waiting for administrator approval.
+              Saving new changes will submit the updated profile again.
+            </div>
+
+          }
+
+
+          @if (
+            profile()?.approval_status === 'approved'
+            ) {
+
+            <div class="approval-note approval-note--approved">
+              Your profile is approved and eligible to appear on the
+              Barmanasin website.
+            </div>
+
+          }
+
+
+          @if (
+            profile()?.approval_status === 'rejected'
+            ) {
+
+            <div class="approval-note approval-note--rejected">
+              Your previous submission was not approved. You can update
+              your information and submit it again.
+            </div>
+
+          }
+
+        </section>
+
+
+        <!-- Feedback -->
+
+        @if (message()) {
+
+          <div
+            class="profile-feedback profile-feedback--success"
+            role="status"
+          >
+            {{ message() }}
+          </div>
+
+        }
+
+
+        @if (errorMessage()) {
+
+          <div
+            class="profile-feedback profile-feedback--error"
+            role="alert"
+          >
+            {{ errorMessage() }}
+          </div>
+
+        }
+
+
+        <!-- Actions -->
+
+        <footer class="profile-form__actions">
+
+          <div>
+
+            @if (form.controls.is_public.value) {
+
+              <strong>
+                Submit for approval
+              </strong>
+
+              <small>
+                Changes will require administrator approval.
+              </small>
+
+            } @else {
+
+              <strong>
+                Save as private
+              </strong>
+
+              <small>
+                Your profile will not be published.
+              </small>
+
+            }
+
+          </div>
+
+
+          <button
+            type="submit"
+            class="profile-save-button"
+            [disabled]="isSaving()"
+          >
+
+            @if (isSaving()) {
+              Saving…
+            } @else if (form.controls.is_public.value) {
+              Save & submit
+            } @else {
+              Save changes
+            }
+
+          </button>
+
+        </footer>
+
+      </form>
+
+    </div>
+
+  }
+
+</section>

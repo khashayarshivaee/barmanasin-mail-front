@@ -1,4 +1,9 @@
 import { bootstrapApplication } from '@angular/platform-browser';
+
+import {
+  isDevMode,
+} from '@angular/core';
+
 import {
   RouteReuseStrategy,
   provideRouter,
@@ -6,46 +11,72 @@ import {
   withPreloading,
   PreloadAllModules,
 } from '@angular/router';
+
 import {
   IonicRouteStrategy,
   provideIonicAngular,
 } from '@ionic/angular';
+
 import {
   provideHttpClient,
   withInterceptors,
 } from '@angular/common/http';
 
 import {
+  provideServiceWorker,
+} from '@angular/service-worker';
+
+import {
   mailAuthInterceptor,
 } from './app/features/mail-auth.interceptor';
 
-import { routes } from './app/app.routes';
-import { AppComponent } from './app/app.component';
-import { isDevMode } from '@angular/core';
-import { provideServiceWorker } from '@angular/service-worker';
+import {
+  routes,
+} from './app/app.routes';
 
-bootstrapApplication(AppComponent, {
-  providers: [
-    {
-      provide: RouteReuseStrategy,
-      useClass: IonicRouteStrategy,
-    },
+import {
+  AppComponent,
+} from './app/app.component';
 
-    provideIonicAngular(),
 
-    provideHttpClient(
-      withInterceptors([
-        mailAuthInterceptor,
-      ]),
-    ),
+bootstrapApplication(
+  AppComponent,
+  {
+    providers: [
+      {
+        provide:
+        RouteReuseStrategy,
 
-    provideRouter(
-      routes,
-      withPreloading(PreloadAllModules),
-      withComponentInputBinding(),
-    ), provideServiceWorker('ngsw-worker.js', {
-            enabled: !isDevMode(),
-            registrationStrategy: 'registerWhenStable:30000'
-          }),
-  ],
-});
+        useClass:
+        IonicRouteStrategy,
+      },
+
+      provideIonicAngular(),
+
+      provideHttpClient(
+        withInterceptors([
+          mailAuthInterceptor,
+        ]),
+      ),
+
+      provideRouter(
+        routes,
+        withPreloading(
+          PreloadAllModules,
+        ),
+        withComponentInputBinding(),
+      ),
+
+      provideServiceWorker(
+        'ngsw-worker.js',
+        {
+          enabled:
+            !isDevMode(),
+
+          registrationStrategy:
+            'registerWhenStable:30000',
+        },
+      ),
+    ],
+  },
+);

@@ -2,12 +2,40 @@
   [fullscreen]="true"
   class="mail-page"
 >
+
+  @if (isInitialLoading()) {
+
+    <div
+      class="mail-loader"
+      role="status"
+      aria-label="Loading Barmanasin Mail"
+    >
+
+      <div class="mail-loader__brand">
+        BARMANASIN
+      </div>
+
+      <div class="mail-loader__title">
+        Mail
+      </div>
+
+      <div class="mail-loader__indicator">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+    </div>
+
+  }
   <app-mail-shell>
 
     <app-mail-sidebar
       mail-sidebar
+      [teamProfileActive]="isTeamProfileOpen()"
       (compose)="openCompose()"
       (folderChange)="onFolderChange()"
+      (teamProfileRequested)="openTeamProfile()"
     ></app-mail-sidebar>
 
     <app-mail-topbar
@@ -18,7 +46,13 @@
       (searchClick)="openSearch()"
     ></app-mail-topbar>
 
-    @if (isComposeOpen()) {
+    @if (isTeamProfileOpen()) {
+
+      <app-mail-team-profile
+        mail-content
+      ></app-mail-team-profile>
+
+    } @else if (isComposeOpen()) {
 
       <app-mail-compose
         mail-content
@@ -29,6 +63,7 @@
         (discard)="closeCompose()"
         (draftSaved)="onDraftSaved()"
         (sendRequested)="sendMail($event)"
+        (closeRequested)="closeCompose()"
       ></app-mail-compose>
 
     } @else {
@@ -43,4 +78,27 @@
     }
 
   </app-mail-shell>
+
+  @if (
+    activeFolder() === 'inbox'
+    && !isComposeOpen()
+    && !isTeamProfileOpen()
+    ) {
+
+    <button
+      type="button"
+      class="mobile-compose-button"
+      (click)="openCompose()"
+      aria-label="Compose new message"
+    >
+    <span class="mobile-compose-button__plus">
+      +
+    </span>
+
+      <span>
+      Compose
+    </span>
+    </button>
+
+  }
 </ion-content>

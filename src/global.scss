@@ -95,3 +95,55 @@ ion-modal.mail-welcome-modal::part(content) {
   }
 
 }
+
+/* -------------------------------------------------------
+   PWA / iOS STATUS BAR BACKDROP
+------------------------------------------------------- */
+
+@media (display-mode: standalone) {
+
+  body::before {
+    content: "";
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: env(safe-area-inset-top);
+
+    z-index: 2147483646;
+
+    pointer-events: none;
+
+    background: #f3f1eb;
+  }
+
+}
+
+/* -------------------------------------------------------
+   APP BOOT BACKGROUND
+------------------------------------------------------- */
+
+html,
+body,
+app-root,
+ion-app {
+  background: #f3f1eb;
+}
+
+/* -------------------------------------------------------
+   PWA ROOT BACKGROUND
+------------------------------------------------------- */
+
+@media (display-mode: standalone) {
+
+  html,
+  body,
+  app-root,
+  ion-app {
+    background:#f3f1eb;
+  }
+
+}
